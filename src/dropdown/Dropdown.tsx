@@ -1,4 +1,4 @@
-import { useId, useState, useCallback, useMemo, type ReactNode } from 'react'
+import { useId, useRef, useState, useCallback, useMemo, type ReactNode } from 'react'
 import { DropdownContext, type DropdownContextValue } from './context'
 
 interface DropdownProps {
@@ -10,6 +10,8 @@ interface DropdownProps {
 export function Dropdown({ open: controlledOpen, onOpenChange, children }: DropdownProps) {
   const triggerId = useId()
   const contentId = useId()
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
 
   const [internalOpen, setInternalOpen] = useState(false)
   const open = controlledOpen !== undefined ? controlledOpen : internalOpen
@@ -23,7 +25,7 @@ export function Dropdown({ open: controlledOpen, onOpenChange, children }: Dropd
   )
 
   const ctx: DropdownContextValue = useMemo(
-    () => ({ open, setOpen, triggerId, contentId }),
+    () => ({ open, setOpen, triggerId, contentId, triggerRef, contentRef }),
     [open, setOpen, triggerId, contentId],
   )
 

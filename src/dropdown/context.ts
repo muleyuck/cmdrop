@@ -1,10 +1,12 @@
-import { createContext, useContext } from 'react'
+import { createContext, useContext, type RefObject } from 'react'
 
 export interface DropdownContextValue {
   open: boolean
   setOpen: (open: boolean) => void
   triggerId: string
   contentId: string
+  triggerRef: RefObject<HTMLButtonElement | null>
+  contentRef: RefObject<HTMLDivElement | null>
 }
 
 export const DropdownContext = createContext<DropdownContextValue | null>(null)

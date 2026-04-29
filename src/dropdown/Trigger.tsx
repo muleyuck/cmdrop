@@ -6,10 +6,11 @@ interface TriggerProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export function Trigger({ children, onClick, ...rest }: TriggerProps) {
-  const { open, setOpen, triggerId, contentId } = useDropdown()
+  const { open, setOpen, triggerId, contentId, triggerRef } = useDropdown()
 
   return (
     <button
+      ref={triggerRef}
       id={triggerId}
       type="button"
       aria-haspopup="listbox"
