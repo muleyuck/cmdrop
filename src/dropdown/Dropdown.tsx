@@ -37,10 +37,15 @@ export function Dropdown(props: DropdownProps) {
   const [internalOpen, setInternalOpen] = useState(false)
   const open = controlledOpen !== undefined ? controlledOpen : internalOpen
 
+  const [highlightedValue, setHighlightedValue] = useState<string | null>(null)
+  const items = useRef<string[]>([])
+  const pendingDirection = useRef<'first' | 'last' | null>(null)
+
   const setOpen = useCallback(
     (next: boolean) => {
       if (controlledOpen === undefined) setInternalOpen(next)
       onOpenChange?.(next)
+      if (!next) setHighlightedValue(null)
     },
     [controlledOpen, onOpenChange],
   )
@@ -77,8 +82,8 @@ export function Dropdown(props: DropdownProps) {
   )
 
   const ctx: DropdownContextValue = useMemo(
-    () => ({ open, setOpen, triggerId, contentId, triggerRef, contentRef, selectedValues, multiple, onSelect }),
-    [open, setOpen, triggerId, contentId, selectedValues, multiple, onSelect],
+    () => ({ open, setOpen, triggerId, contentId, triggerRef, contentRef, selectedValues, multiple, onSelect, highlightedValue, setHighlightedValue, items, pendingDirection }),
+    [open, setOpen, triggerId, contentId, selectedValues, multiple, onSelect, highlightedValue],
   )
 
   return <DropdownContext.Provider value={ctx}>{children}</DropdownContext.Provider>

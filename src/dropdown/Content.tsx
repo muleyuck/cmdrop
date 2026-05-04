@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState, type HTMLAttributes, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type HTMLAttributes, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { useDropdown } from './context'
 
@@ -15,7 +15,7 @@ interface Position {
 }
 
 export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
-  const { open, setOpen, triggerId, contentId, triggerRef, contentRef } = useDropdown()
+  const { open, setOpen, triggerId, contentId, triggerRef, contentRef, highlightedValue, setHighlightedValue, items, onSelect, pendingDirection } = useDropdown()
 
   const [pos, setPos] = useState<Position>({ top: 0, left: 0, width: 0, side: 'bottom', ready: false })
 
@@ -47,19 +47,47 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
     return () => document.removeEventListener('pointerdown', onPointerDown)
   }, [open, setOpen, triggerRef, contentRef])
 
-  // Close on Escape regardless of focused element
+  // Set initial highlight when opened via keyboard (runs after Item effects register items)
+  useEffect(() => {
+    if (!open || pendingDirection.current === null) return
+    const list = items.current
+    const target = pendingDirection.current === 'first' ? list[0] : list[list.length - 1]
+    if (target !== undefined) setHighlightedValue(target)
+    pendingDirection.current = null
+  }, [open, items, pendingDirection, setHighlightedValue])
+
+  // Keep latest highlightedValue in ref to avoid re-registering listener on every navigation step
+  const highlightedRef = useRef(highlightedValue)
+  highlightedRef.current = highlightedValue
+
+  // Keyboard navigation — registered only while open, removed on close/unmount
   useEffect(() => {
     if (!open) return
-    const onKeyDown = (e: globalThis.KeyboardEvent) => {
+    const handler = (e: globalThis.KeyboardEvent) => {
+      if (e.isComposing) return
+      const list = items.current
+      const current = highlightedRef.current
+      const idx = list.indexOf(current ?? '')
       if (e.key === 'Escape') {
         e.preventDefault()
         setOpen(false)
         triggerRef.current?.focus()
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault()
+        const next = idx < list.length - 1 ? list[idx + 1] : list[0]
+        if (next !== undefined) setHighlightedValue(next)
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault()
+        const prev = idx > 0 ? list[idx - 1] : list[list.length - 1]
+        if (prev !== undefined) setHighlightedValue(prev)
+      } else if (e.key === 'Enter') {
+        e.preventDefault()
+        if (current !== null) onSelect(current)
       }
     }
-    document.addEventListener('keydown', onKeyDown)
-    return () => document.removeEventListener('keydown', onKeyDown)
-  }, [open, setOpen, triggerRef])
+    document.addEventListener('keydown', handler)
+    return () => document.removeEventListener('keydown', handler)
+  }, [open, setOpen, triggerRef, items, onSelect])
 
   if (!open) return null
 

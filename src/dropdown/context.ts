@@ -1,4 +1,4 @@
-import { createContext, useContext, type RefObject } from 'react'
+import { createContext, useContext, type RefObject, type MutableRefObject } from 'react'
 
 export interface DropdownContextValue {
   open: boolean
@@ -10,6 +10,10 @@ export interface DropdownContextValue {
   selectedValues: Set<string>
   multiple: boolean
   onSelect: (value: string) => void
+  highlightedValue: string | null
+  setHighlightedValue: (value: string | null) => void
+  items: MutableRefObject<string[]>
+  pendingDirection: MutableRefObject<'first' | 'last' | null>
 }
 
 export const DropdownContext = createContext<DropdownContextValue | null>(null)
