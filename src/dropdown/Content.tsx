@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState, type HTMLAttributes, type KeyboardEvent, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useState, type HTMLAttributes, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { useDropdown } from './context'
 
@@ -19,7 +19,7 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
 
   const [pos, setPos] = useState<Position>({ top: 0, left: 0, width: 0, side: 'bottom', ready: false })
 
-  // 位置計算: 描画前に実行してフリッカーを防ぐ
+  // Calculate position before paint to avoid flicker
   useLayoutEffect(() => {
     if (!open || !triggerRef.current || !contentRef.current) {
       setPos((p) => ({ ...p, ready: false }))
@@ -35,7 +35,7 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
     setPos({ top, left: trigger.left, width: trigger.width, side, ready: true })
   }, [open])
 
-  // 外側クリックで閉じる (pointerdown でマウス・タッチ統一)
+  // Close on outside click (pointerdown covers mouse and touch)
   useEffect(() => {
     if (!open) return
     const onPointerDown = (e: PointerEvent) => {
@@ -47,7 +47,7 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
     return () => document.removeEventListener('pointerdown', onPointerDown)
   }, [open, setOpen, triggerRef, contentRef])
 
-  // Escape で閉じる: フォーカス位置に依らずドキュメントレベルで監視
+  // Close on Escape regardless of focused element
   useEffect(() => {
     if (!open) return
     const onKeyDown = (e: globalThis.KeyboardEvent) => {
@@ -61,10 +61,6 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
     return () => document.removeEventListener('keydown', onKeyDown)
   }, [open, setOpen, triggerRef])
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    onKeyDown?.(e)
-  }
-
   if (!open) return null
 
   return createPortal(
@@ -77,7 +73,7 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
       data-cmdrop-content=""
       data-state="open"
       data-side={pos.side}
-      onKeyDown={handleKeyDown}
+      onKeyDown={onKeyDown}
       style={{
         position: 'fixed',
         top: pos.top,
