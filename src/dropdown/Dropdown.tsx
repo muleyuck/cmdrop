@@ -1,13 +1,34 @@
 import { useId, useRef, useState, useCallback, useMemo, type ReactNode } from 'react'
 import { DropdownContext, type DropdownContextValue } from './context'
 
-interface DropdownProps {
+interface DropdownBaseProps {
   open?: boolean
   onOpenChange?: (open: boolean) => void
   children: ReactNode
 }
 
-export function Dropdown({ open: controlledOpen, onOpenChange, children }: DropdownProps) {
+interface DropdownSingleProps extends DropdownBaseProps {
+  multiple?: false
+  value?: string
+  onValueChange?: (value: string) => void
+}
+
+interface DropdownMultipleProps extends DropdownBaseProps {
+  multiple: true
+  value?: string[]
+  onValueChange?: (value: string[]) => void
+}
+
+type DropdownProps = DropdownSingleProps | DropdownMultipleProps
+
+const toSet = (v: string | string[] | undefined): Set<string> => {
+  if (v === undefined) return new Set()
+  return new Set(Array.isArray(v) ? v : [v])
+}
+
+export function Dropdown(props: DropdownProps) {
+  const { open: controlledOpen, onOpenChange, children } = props
+
   const triggerId = useId()
   const contentId = useId()
   const triggerRef = useRef<HTMLButtonElement>(null)
@@ -24,9 +45,40 @@ export function Dropdown({ open: controlledOpen, onOpenChange, children }: Dropd
     [controlledOpen, onOpenChange],
   )
 
+  const isControlled = props.value !== undefined
+  const [internalValues, setInternalValues] = useState<Set<string>>(new Set())
+  const selectedValues = isControlled ? toSet(props.value) : internalValues
+  const multiple = props.multiple ?? false
+
+  // Keep latest props and selectedValues in refs to stabilize onSelect reference
+  const latestProps = useRef(props)
+  latestProps.current = props
+  const latestSelectedValues = useRef(selectedValues)
+  latestSelectedValues.current = selectedValues
+
+  const onSelect = useCallback(
+    (value: string) => {
+      const p = latestProps.current
+      const current = latestSelectedValues.current
+      const controlled = p.value !== undefined
+      if (p.multiple) {
+        const next = new Set(current)
+        if (next.has(value)) next.delete(value)
+        else next.add(value)
+        if (!controlled) setInternalValues(next)
+        p.onValueChange?.([...next])
+      } else {
+        if (!controlled) setInternalValues(new Set([value]))
+        p.onValueChange?.(value)
+        setOpen(false)
+      }
+    },
+    [setOpen],
+  )
+
   const ctx: DropdownContextValue = useMemo(
-    () => ({ open, setOpen, triggerId, contentId, triggerRef, contentRef }),
-    [open, setOpen, triggerId, contentId],
+    () => ({ open, setOpen, triggerId, contentId, triggerRef, contentRef, selectedValues, multiple, onSelect }),
+    [open, setOpen, triggerId, contentId, selectedValues, multiple, onSelect],
   )
 
   return <DropdownContext.Provider value={ctx}>{children}</DropdownContext.Provider>

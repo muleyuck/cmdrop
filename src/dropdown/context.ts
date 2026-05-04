@@ -7,6 +7,9 @@ export interface DropdownContextValue {
   contentId: string
   triggerRef: RefObject<HTMLButtonElement | null>
   contentRef: RefObject<HTMLDivElement | null>
+  selectedValues: Set<string>
+  multiple: boolean
+  onSelect: (value: string) => void
 }
 
 export const DropdownContext = createContext<DropdownContextValue | null>(null)
