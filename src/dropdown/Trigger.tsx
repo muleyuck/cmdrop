@@ -1,5 +1,5 @@
-import { type ButtonHTMLAttributes, type KeyboardEvent, type ReactNode } from 'react'
-import { useDropdown } from './context'
+import type { ButtonHTMLAttributes, KeyboardEvent, ReactNode } from "react"
+import { useDropdown } from "./context"
 
 interface TriggerProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode
@@ -9,14 +9,17 @@ export function Trigger({ children, onClick, onKeyDown, ...rest }: TriggerProps)
   const { open, setOpen, triggerId, contentId, triggerRef, pendingDirection } = useDropdown()
 
   const handleKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
-    if (open) { onKeyDown?.(e); return }
-    if (e.key === 'ArrowDown') {
+    if (open) {
+      onKeyDown?.(e)
+      return
+    }
+    if (e.key === "ArrowDown") {
       e.preventDefault()
-      pendingDirection.current = 'first'
+      pendingDirection.current = "first"
       setOpen(true)
-    } else if (e.key === 'ArrowUp') {
+    } else if (e.key === "ArrowUp") {
       e.preventDefault()
-      pendingDirection.current = 'last'
+      pendingDirection.current = "last"
       setOpen(true)
     }
     onKeyDown?.(e)
@@ -31,7 +34,7 @@ export function Trigger({ children, onClick, onKeyDown, ...rest }: TriggerProps)
       aria-expanded={open}
       aria-controls={open ? contentId : undefined}
       data-cmdrop-trigger=""
-      data-state={open ? 'open' : 'closed'}
+      data-state={open ? "open" : "closed"}
       onClick={(e) => {
         setOpen(!open)
         onClick?.(e)

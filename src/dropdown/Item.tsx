@@ -1,7 +1,7 @@
-import { useEffect, type HTMLAttributes, type ReactNode } from 'react'
-import { useDropdown } from './context'
+import { type HTMLAttributes, type KeyboardEvent, type ReactNode, useEffect } from "react"
+import { useDropdown } from "./context"
 
-interface ItemProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onClick'> {
+interface ItemProps extends Omit<HTMLAttributes<HTMLDivElement>, "onClick" | "onKeyDown"> {
   value: string
   disabled?: boolean
   children: ReactNode
@@ -24,9 +24,17 @@ export function Item({ value, disabled = false, children, ...rest }: ItemProps) 
     }
   }, [value, disabled, items])
 
-  const handleClick = () => {
+  const handleSelect = () => {
     if (disabled) return
     onSelect(value)
+  }
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (disabled) return
+    if (e.key === "Enter") {
+      e.preventDefault()
+      onSelect(value)
+    }
   }
 
   return (
@@ -35,11 +43,13 @@ export function Item({ value, disabled = false, children, ...rest }: ItemProps) 
       role="option"
       aria-selected={isSelected}
       aria-disabled={disabled || undefined}
+      tabIndex={disabled ? undefined : -1}
       data-cmdrop-item=""
-      {...(isSelected ? { 'data-selected': '' } : {})}
-      {...(disabled ? { 'data-disabled': '' } : {})}
-      {...(isHighlighted ? { 'data-highlighted': '' } : {})}
-      onClick={handleClick}
+      {...(isSelected ? { "data-selected": "" } : {})}
+      {...(disabled ? { "data-disabled": "" } : {})}
+      {...(isHighlighted ? { "data-highlighted": "" } : {})}
+      onClick={handleSelect}
+      onKeyDown={handleKeyDown}
     >
       {children}
     </div>

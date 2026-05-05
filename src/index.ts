@@ -1,9 +1,11 @@
 export {
-  Dropdown,
-  Trigger as DropdownTrigger,
   Content as DropdownContent,
-  Item as DropdownItem,
-  Group as DropdownGroup,
-  Separator as DropdownSeparator,
+  Dropdown,
   Empty as DropdownEmpty,
-} from './dropdown'
+  Group as DropdownGroup,
+  Item as DropdownItem,
+  Separator as DropdownSeparator,
+  Trigger as DropdownTrigger,
+} from "./dropdown"
+
+export type { DropdownMultipleProps, DropdownProps, DropdownSingleProps } from "./dropdown/Dropdown"

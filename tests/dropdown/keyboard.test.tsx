@@ -1,10 +1,10 @@
-import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { Dropdown } from '../../src/dropdown/Dropdown'
-import { Trigger } from '../../src/dropdown/Trigger'
-import { Content } from '../../src/dropdown/Content'
-import { Item } from '../../src/dropdown/Item'
+import { render, screen } from "@testing-library/react"
+import userEvent from "@testing-library/user-event"
+import { describe, expect, it, vi } from "vitest"
+import { Content } from "../../src/dropdown/Content"
+import { Dropdown } from "../../src/dropdown/Dropdown"
+import { Item } from "../../src/dropdown/Item"
+import { Trigger } from "../../src/dropdown/Trigger"
 
 function setup(onValueChange = vi.fn()) {
   render(
@@ -13,7 +13,9 @@ function setup(onValueChange = vi.fn()) {
       <Content>
         <Item value="apple">Apple</Item>
         <Item value="banana">Banana</Item>
-        <Item value="cherry" disabled>Cherry</Item>
+        <Item value="cherry" disabled>
+          Cherry
+        </Item>
         <Item value="lemon">Lemon</Item>
       </Content>
     </Dropdown>,
@@ -21,83 +23,83 @@ function setup(onValueChange = vi.fn()) {
   return { onValueChange }
 }
 
-describe('キーボードナビゲーション', () => {
-  it('ArrowDown で open になり先頭アイテムがハイライトされる', async () => {
+describe("キーボードナビゲーション", () => {
+  it("ArrowDown で open になり先頭アイテムがハイライトされる", async () => {
     const user = userEvent.setup()
     setup()
-    screen.getByRole('button').focus()
-    await user.keyboard('{ArrowDown}')
-    expect(screen.getByRole('listbox')).toBeInTheDocument()
-    expect(screen.getByText('Apple')).toHaveAttribute('data-highlighted')
+    screen.getByRole("button").focus()
+    await user.keyboard("{ArrowDown}")
+    expect(screen.getByRole("listbox")).toBeInTheDocument()
+    expect(screen.getByText("Apple")).toHaveAttribute("data-highlighted")
   })
 
-  it('ArrowUp で open になり末尾アイテムがハイライトされる', async () => {
+  it("ArrowUp で open になり末尾アイテムがハイライトされる", async () => {
     const user = userEvent.setup()
     setup()
-    screen.getByRole('button').focus()
-    await user.keyboard('{ArrowUp}')
-    expect(screen.getByRole('listbox')).toBeInTheDocument()
-    expect(screen.getByText('Lemon')).toHaveAttribute('data-highlighted')
+    screen.getByRole("button").focus()
+    await user.keyboard("{ArrowUp}")
+    expect(screen.getByRole("listbox")).toBeInTheDocument()
+    expect(screen.getByText("Lemon")).toHaveAttribute("data-highlighted")
   })
 
-  it('ArrowDown で次のアイテムに移動する', async () => {
+  it("ArrowDown で次のアイテムに移動する", async () => {
     const user = userEvent.setup()
     setup()
-    screen.getByRole('button').focus()
-    await user.keyboard('{ArrowDown}')
-    await user.keyboard('{ArrowDown}')
-    expect(screen.getByText('Banana')).toHaveAttribute('data-highlighted')
-    expect(screen.getByText('Apple')).not.toHaveAttribute('data-highlighted')
+    screen.getByRole("button").focus()
+    await user.keyboard("{ArrowDown}")
+    await user.keyboard("{ArrowDown}")
+    expect(screen.getByText("Banana")).toHaveAttribute("data-highlighted")
+    expect(screen.getByText("Apple")).not.toHaveAttribute("data-highlighted")
   })
 
-  it('disabled アイテムをスキップする', async () => {
+  it("disabled アイテムをスキップする", async () => {
     const user = userEvent.setup()
     setup()
-    screen.getByRole('button').focus()
-    await user.keyboard('{ArrowDown}')  // Apple
-    await user.keyboard('{ArrowDown}')  // Banana
-    await user.keyboard('{ArrowDown}')  // Cherry はスキップ → Lemon
-    expect(screen.getByText('Lemon')).toHaveAttribute('data-highlighted')
+    screen.getByRole("button").focus()
+    await user.keyboard("{ArrowDown}") // Apple
+    await user.keyboard("{ArrowDown}") // Banana
+    await user.keyboard("{ArrowDown}") // Cherry はスキップ → Lemon
+    expect(screen.getByText("Lemon")).toHaveAttribute("data-highlighted")
   })
 
-  it('ArrowDown が末尾でループして先頭に戻る', async () => {
+  it("ArrowDown が末尾でループして先頭に戻る", async () => {
     const user = userEvent.setup()
     setup()
-    screen.getByRole('button').focus()
-    await user.keyboard('{ArrowDown}')  // Apple
-    await user.keyboard('{ArrowDown}')  // Banana
-    await user.keyboard('{ArrowDown}')  // Lemon
-    await user.keyboard('{ArrowDown}')  // Apple (ループ)
-    expect(screen.getByText('Apple')).toHaveAttribute('data-highlighted')
+    screen.getByRole("button").focus()
+    await user.keyboard("{ArrowDown}") // Apple
+    await user.keyboard("{ArrowDown}") // Banana
+    await user.keyboard("{ArrowDown}") // Lemon
+    await user.keyboard("{ArrowDown}") // Apple (ループ)
+    expect(screen.getByText("Apple")).toHaveAttribute("data-highlighted")
   })
 
-  it('ArrowUp で前のアイテムに移動する', async () => {
+  it("ArrowUp で前のアイテムに移動する", async () => {
     const user = userEvent.setup()
     setup()
-    screen.getByRole('button').focus()
-    await user.keyboard('{ArrowDown}')  // Apple
-    await user.keyboard('{ArrowDown}')  // Banana
-    await user.keyboard('{ArrowUp}')    // Apple
-    expect(screen.getByText('Apple')).toHaveAttribute('data-highlighted')
+    screen.getByRole("button").focus()
+    await user.keyboard("{ArrowDown}") // Apple
+    await user.keyboard("{ArrowDown}") // Banana
+    await user.keyboard("{ArrowUp}") // Apple
+    expect(screen.getByText("Apple")).toHaveAttribute("data-highlighted")
   })
 
-  it('Enter でハイライト中のアイテムを選択する', async () => {
+  it("Enter でハイライト中のアイテムを選択する", async () => {
     const user = userEvent.setup()
     const { onValueChange } = setup()
-    screen.getByRole('button').focus()
-    await user.keyboard('{ArrowDown}')
-    await user.keyboard('{Enter}')
-    expect(onValueChange).toHaveBeenCalledWith('apple')
+    screen.getByRole("button").focus()
+    await user.keyboard("{ArrowDown}")
+    await user.keyboard("{Enter}")
+    expect(onValueChange).toHaveBeenCalledWith("apple")
   })
 
-  it('Escape 後に再度開くと先頭からハイライトされる', async () => {
+  it("Escape 後に再度開くと先頭からハイライトされる", async () => {
     const user = userEvent.setup()
     setup()
-    screen.getByRole('button').focus()
-    await user.keyboard('{ArrowDown}')
-    await user.keyboard('{ArrowDown}')  // Banana
-    await user.keyboard('{Escape}')
-    await user.keyboard('{ArrowDown}')  // 再度 open → Apple
-    expect(screen.getByText('Apple')).toHaveAttribute('data-highlighted')
+    screen.getByRole("button").focus()
+    await user.keyboard("{ArrowDown}")
+    await user.keyboard("{ArrowDown}") // Banana
+    await user.keyboard("{Escape}")
+    await user.keyboard("{ArrowDown}") // 再度 open → Apple
+    expect(screen.getByText("Apple")).toHaveAttribute("data-highlighted")
   })
 })
