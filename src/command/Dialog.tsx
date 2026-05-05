@@ -1,4 +1,4 @@
-import { type HTMLAttributes, type ReactNode } from "react"
+import type { HTMLAttributes, ReactNode } from "react"
 import { createPortal } from "react-dom"
 import { useCommand } from "./context"
 
