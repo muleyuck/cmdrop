@@ -7,12 +7,21 @@ interface CommandProps {
   children: ReactNode
 }
 
+interface RegisteredItem {
+  value: string
+  onSelect: () => void
+}
+
 export function Command({ open: controlledOpen, onOpenChange, children }: CommandProps) {
   const [internalOpen, setInternalOpen] = useState(false)
   const open = controlledOpen !== undefined ? controlledOpen : internalOpen
 
+  const [highlightedValue, setHighlightedValue] = useState<string | null>(null)
+  const [query, setQuery] = useState("")
+
   const setOpen = useCallback(
     (next: boolean) => {
+      if (!next) setHighlightedValue(null)
       if (controlledOpen === undefined) setInternalOpen(next)
       onOpenChange?.(next)
     },
@@ -24,24 +33,59 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
   const setOpenRef = useRef(setOpen)
   setOpenRef.current = setOpen
 
+  const highlightedRef = useRef(highlightedValue)
+  highlightedRef.current = highlightedValue
+
+  const itemsRef = useRef<RegisteredItem[]>([])
+
+  const registerItem = useCallback((value: string, onSelect: () => void) => {
+    if (!itemsRef.current.some((i) => i.value === value)) {
+      itemsRef.current.push({ value, onSelect })
+    }
+  }, [])
+
+  const unregisterItem = useCallback((value: string) => {
+    itemsRef.current = itemsRef.current.filter((i) => i.value !== value)
+    if (highlightedRef.current === value) setHighlightedValue(null)
+  }, [])
+
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.isComposing) return
+      const list = itemsRef.current
+      const current = highlightedRef.current
+      const idx = list.findIndex((i) => i.value === (current ?? ""))
+
       if (e.key === "Escape" && openRef.current) {
         e.preventDefault()
         setOpenRef.current(false)
       } else if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault()
         setOpenRef.current(!openRef.current)
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault()
+        const next = idx < list.length - 1 ? list[idx + 1] : list[0]
+        if (next !== undefined) setHighlightedValue(next.value)
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault()
+        const prev = idx > 0 ? list[idx - 1] : list[list.length - 1]
+        if (prev !== undefined) setHighlightedValue(prev.value)
+      } else if (e.key === "Enter") {
+        const item = list.find((i) => i.value === (current ?? ""))
+        if (item) {
+          e.preventDefault()
+          item.onSelect()
+        }
       }
     }
     document.addEventListener("keydown", handleKeyDown)
     return () => document.removeEventListener("keydown", handleKeyDown)
   }, [])
 
-  const [query, setQuery] = useState("")
-
-  const ctx: CommandContextValue = useMemo(() => ({ open, setOpen, query, setQuery }), [open, setOpen, query])
+  const ctx: CommandContextValue = useMemo(
+    () => ({ open, setOpen, query, setQuery, highlightedValue, setHighlightedValue, registerItem, unregisterItem }),
+    [open, setOpen, query, highlightedValue, registerItem, unregisterItem],
+  )
 
   return <CommandContext.Provider value={ctx}>{children}</CommandContext.Provider>
 }

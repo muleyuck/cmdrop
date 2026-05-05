@@ -5,6 +5,10 @@ export interface CommandContextValue {
   setOpen: (open: boolean) => void
   query: string
   setQuery: (query: string) => void
+  highlightedValue: string | null
+  setHighlightedValue: (value: string | null) => void
+  registerItem: (value: string, onSelect: () => void) => void
+  unregisterItem: (value: string) => void
 }
 
 export const CommandContext = createContext<CommandContextValue | null>(null)
