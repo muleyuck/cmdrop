@@ -57,5 +57,64 @@
         }
       ]
     }
+    {
+      "name": "command",
+      "type": "registry:ui",
+      "title": "Command",
+      "description": "Unstyled, accessible Command Palette with text filtering, keyboard navigation, and zero dependencies.",
+      "dependencies": [],
+      "files": [
+        {
+          "path": "src/command/context.ts",
+          "type": "registry:ui",
+          "target": "components/ui/command/context.ts"
+        },
+        {
+          "path": "src/command/Command.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/command/Command.tsx"
+        },
+        {
+          "path": "src/command/Dialog.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/command/Dialog.tsx"
+        },
+        {
+          "path": "src/command/Input.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/command/Input.tsx"
+        },
+        {
+          "path": "src/command/List.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/command/List.tsx"
+        },
+        {
+          "path": "src/command/Item.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/command/Item.tsx"
+        },
+        {
+          "path": "src/command/Group.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/command/Group.tsx"
+        },
+        {
+          "path": "src/command/Separator.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/command/Separator.tsx"
+        },
+        {
+          "path": "src/command/Empty.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/command/Empty.tsx"
+        },
+        {
+          "path": "src/command/index.ts",
+          "type": "registry:ui",
+          "target": "components/ui/command/index.ts"
+        }
+      ]
+    }
   ]
 }
