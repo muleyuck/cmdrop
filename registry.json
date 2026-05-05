@@ -1,0 +1,61 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "cmdrop",
+  "homepage": "https://github.com/muleyuck/cmdrop",
+  "items": [
+    {
+      "name": "dropdown",
+      "type": "registry:ui",
+      "title": "Dropdown",
+      "description": "Unstyled, accessible Dropdown with single/multiple selection, keyboard navigation, and zero dependencies.",
+      "dependencies": [],
+      "files": [
+        {
+          "path": "src/dropdown/context.ts",
+          "type": "registry:ui",
+          "target": "components/ui/dropdown/context.ts"
+        },
+        {
+          "path": "src/dropdown/Dropdown.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/dropdown/Dropdown.tsx"
+        },
+        {
+          "path": "src/dropdown/Trigger.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/dropdown/Trigger.tsx"
+        },
+        {
+          "path": "src/dropdown/Content.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/dropdown/Content.tsx"
+        },
+        {
+          "path": "src/dropdown/Item.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/dropdown/Item.tsx"
+        },
+        {
+          "path": "src/dropdown/Group.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/dropdown/Group.tsx"
+        },
+        {
+          "path": "src/dropdown/Separator.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/dropdown/Separator.tsx"
+        },
+        {
+          "path": "src/dropdown/Empty.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/dropdown/Empty.tsx"
+        },
+        {
+          "path": "src/dropdown/index.ts",
+          "type": "registry:ui",
+          "target": "components/ui/dropdown/index.ts"
+        }
+      ]
+    }
+  ]
+}
