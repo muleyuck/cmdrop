@@ -18,6 +18,7 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
 
   const [highlightedValue, setHighlightedValue] = useState<string | null>(null)
   const [query, setQuery] = useState("")
+  const [itemCount, setItemCount] = useState(0)
 
   const setOpen = useCallback(
     (next: boolean) => {
@@ -39,13 +40,19 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
   const itemsRef = useRef<RegisteredItem[]>([])
 
   const registerItem = useCallback((value: string, onSelect: () => void) => {
-    if (!itemsRef.current.some((i) => i.value === value)) {
+    const existing = itemsRef.current.find((i) => i.value === value)
+    if (existing) {
+      existing.onSelect = onSelect
+    } else {
       itemsRef.current.push({ value, onSelect })
+      setItemCount((c) => c + 1)
     }
   }, [])
 
   const unregisterItem = useCallback((value: string) => {
+    const existed = itemsRef.current.some((i) => i.value === value)
     itemsRef.current = itemsRef.current.filter((i) => i.value !== value)
+    if (existed) setItemCount((c) => c - 1)
     if (highlightedRef.current === value) setHighlightedValue(null)
   }, [])
 
@@ -83,8 +90,18 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
   }, [])
 
   const ctx: CommandContextValue = useMemo(
-    () => ({ open, setOpen, query, setQuery, highlightedValue, setHighlightedValue, registerItem, unregisterItem }),
-    [open, setOpen, query, highlightedValue, registerItem, unregisterItem],
+    () => ({
+      open,
+      setOpen,
+      query,
+      setQuery,
+      highlightedValue,
+      setHighlightedValue,
+      registerItem,
+      unregisterItem,
+      itemCount,
+    }),
+    [open, setOpen, query, highlightedValue, registerItem, unregisterItem, itemCount],
   )
 
   return <CommandContext.Provider value={ctx}>{children}</CommandContext.Provider>

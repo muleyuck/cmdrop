@@ -13,19 +13,18 @@ export function Item({ onSelect, disabled = false, children, ...rest }: ItemProp
 
   const value = typeof children === "string" ? children : ""
   const isHighlighted = value !== "" && highlightedValue === value
+  const isVisible = !query || typeof children !== "string" || children.toLowerCase().includes(query.toLowerCase())
 
   const onSelectRef = useRef(onSelect)
   onSelectRef.current = onSelect
 
   useEffect(() => {
-    if (!value || disabled) return
+    if (!value || disabled || !isVisible) return
     registerItem(value, () => onSelectRef.current())
     return () => unregisterItem(value)
-  }, [value, disabled, registerItem, unregisterItem])
+  }, [value, disabled, isVisible, registerItem, unregisterItem])
 
-  if (query && typeof children === "string" && !children.toLowerCase().includes(query.toLowerCase())) {
-    return null
-  }
+  if (!isVisible) return null
 
   return (
     <div

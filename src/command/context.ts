@@ -9,6 +9,7 @@ export interface CommandContextValue {
   setHighlightedValue: (value: string | null) => void
   registerItem: (value: string, onSelect: () => void) => void
   unregisterItem: (value: string) => void
+  itemCount: number
 }
 
 export const CommandContext = createContext<CommandContextValue | null>(null)
