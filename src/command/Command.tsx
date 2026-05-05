@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, type ReactNode } from "react"
+import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { CommandContext, type CommandContextValue } from "./context"
 
 interface CommandProps {
@@ -18,6 +18,26 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
     },
     [controlledOpen, onOpenChange],
   )
+
+  const openRef = useRef(open)
+  openRef.current = open
+  const setOpenRef = useRef(setOpen)
+  setOpenRef.current = setOpen
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.isComposing) return
+      if (e.key === "Escape" && openRef.current) {
+        e.preventDefault()
+        setOpenRef.current(false)
+      } else if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault()
+        setOpenRef.current(!openRef.current)
+      }
+    }
+    document.addEventListener("keydown", handleKeyDown)
+    return () => document.removeEventListener("keydown", handleKeyDown)
+  }, [])
 
   const ctx: CommandContextValue = useMemo(() => ({ open, setOpen }), [open, setOpen])
 
