@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react"
+import { useCommand } from "./context"
 
 interface ItemProps extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
   onSelect: () => void
@@ -7,6 +8,12 @@ interface ItemProps extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
 }
 
 export function Item({ onSelect, disabled = false, children, ...rest }: ItemProps) {
+  const { query } = useCommand()
+
+  if (query && typeof children === "string" && !children.toLowerCase().includes(query.toLowerCase())) {
+    return null
+  }
+
   return (
     <div
       role="option"

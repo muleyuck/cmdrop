@@ -39,7 +39,9 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
     return () => document.removeEventListener("keydown", handleKeyDown)
   }, [])
 
-  const ctx: CommandContextValue = useMemo(() => ({ open, setOpen }), [open, setOpen])
+  const [query, setQuery] = useState("")
+
+  const ctx: CommandContextValue = useMemo(() => ({ open, setOpen, query, setQuery }), [open, setOpen, query])
 
   return <CommandContext.Provider value={ctx}>{children}</CommandContext.Provider>
 }

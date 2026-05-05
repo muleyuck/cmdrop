@@ -3,6 +3,8 @@ import { createContext, useContext } from "react"
 export interface CommandContextValue {
   open: boolean
   setOpen: (open: boolean) => void
+  query: string
+  setQuery: (query: string) => void
 }
 
 export const CommandContext = createContext<CommandContextValue | null>(null)
