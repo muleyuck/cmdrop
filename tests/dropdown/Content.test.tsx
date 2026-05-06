@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react"
+import { act, render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { describe, expect, it } from "vitest"
 import { Content } from "../../src/dropdown/Content"
@@ -73,6 +73,24 @@ describe("Dropdown.Content", () => {
     await user.click(screen.getByRole("button", { name: "Open" }))
     expect(screen.getByRole("listbox")).toBeInTheDocument()
     await user.click(screen.getByRole("button", { name: "outside" }))
+    expect(screen.queryByRole("listbox")).not.toBeInTheDocument()
+  })
+
+  it("スクロール時に閉じる", async () => {
+    const user = userEvent.setup()
+    render(
+      <Dropdown>
+        <Trigger>Open</Trigger>
+        <Content>content</Content>
+      </Dropdown>,
+    )
+    await user.click(screen.getByRole("button"))
+    expect(screen.getByRole("listbox")).toBeInTheDocument()
+
+    act(() => {
+      document.dispatchEvent(new Event("scroll"))
+    })
+
     expect(screen.queryByRole("listbox")).not.toBeInTheDocument()
   })
 

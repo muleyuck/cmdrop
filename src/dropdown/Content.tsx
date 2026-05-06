@@ -72,6 +72,14 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
     return () => document.removeEventListener("pointerdown", onPointerDown)
   }, [open, setOpen, triggerRef, contentRef])
 
+  // Close on scroll
+  useEffect(() => {
+    if (!open) return
+    const onScroll = () => setOpen(false)
+    document.addEventListener("scroll", onScroll, { capture: true })
+    return () => document.removeEventListener("scroll", onScroll, { capture: true })
+  }, [open, setOpen])
+
   // Set initial highlight when opened via keyboard (runs after Item effects register items)
   useEffect(() => {
     if (!open || pendingDirection.current === null) return
