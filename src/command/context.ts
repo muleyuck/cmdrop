@@ -1,3 +1,4 @@
+import type { RefObject } from "react"
 import { createContext, useContext } from "react"
 
 export interface CommandContextValue {
@@ -10,6 +11,7 @@ export interface CommandContextValue {
   registerItem: (value: string, onSelect: () => void) => void
   unregisterItem: (value: string) => void
   itemCount: number
+  inputRef: RefObject<HTMLInputElement | null>
 }
 
 export const CommandContext = createContext<CommandContextValue | null>(null)

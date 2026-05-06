@@ -4,10 +4,11 @@ import { useCommand } from "./context"
 type InputProps = InputHTMLAttributes<HTMLInputElement>
 
 export function Input({ onChange, ...props }: InputProps) {
-  const { setQuery } = useCommand()
+  const { setQuery, inputRef } = useCommand()
 
   return (
     <input
+      ref={inputRef}
       data-cmdrop-command-input=""
       onChange={(e) => {
         setQuery(e.target.value)

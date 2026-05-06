@@ -4,16 +4,17 @@ import { useCommand } from "./context"
 
 interface ItemProps extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
   onSelect: () => void
+  value?: string
   disabled?: boolean
   children: ReactNode
 }
 
-export function Item({ onSelect, disabled = false, children, ...rest }: ItemProps) {
+export function Item({ onSelect, value: valueProp, disabled = false, children, ...rest }: ItemProps) {
   const { query, highlightedValue, registerItem, unregisterItem } = useCommand()
 
-  const value = typeof children === "string" ? children : ""
+  const value = valueProp ?? (typeof children === "string" ? children : "")
   const isHighlighted = value !== "" && highlightedValue === value
-  const isVisible = !query || typeof children !== "string" || children.toLowerCase().includes(query.toLowerCase())
+  const isVisible = !query || value === "" || value.toLowerCase().includes(query.toLowerCase())
 
   const onSelectRef = useRef(onSelect)
   onSelectRef.current = onSelect

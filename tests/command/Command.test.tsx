@@ -35,6 +35,24 @@ describe("Command + Dialog", () => {
   })
 })
 
+describe("Dialog Input focus", () => {
+  it("open=true のとき Input に自動フォーカスされる", () => {
+    setup(true)
+    expect(screen.getByRole("textbox")).toHaveFocus()
+  })
+
+  it("Dialog autoFocus={false} のとき自動フォーカスされない", () => {
+    render(
+      <Command open>
+        <Dialog autoFocus={false}>
+          <Input />
+        </Dialog>
+      </Command>,
+    )
+    expect(screen.getByRole("textbox")).not.toHaveFocus()
+  })
+})
+
 describe("Dialog overlay", () => {
   it("overlay をクリックするとダイアログが閉じる", async () => {
     const onOpenChange = vi.fn()

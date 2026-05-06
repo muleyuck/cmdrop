@@ -39,6 +39,25 @@ describe("Command filtering", () => {
     expect(screen.queryByRole("option", { name: "Settings" })).not.toBeInTheDocument()
   })
 
+  it("value prop を指定すると JSX children でもフィルタリングされる", async () => {
+    render(
+      <Command open>
+        <Input />
+        <List>
+          <Item value="Home" onSelect={vi.fn()}>
+            <span>⌂</span> Home
+          </Item>
+          <Item value="Settings" onSelect={vi.fn()}>
+            <span>⚙</span> Settings
+          </Item>
+        </List>
+      </Command>,
+    )
+    await userEvent.type(screen.getByRole("textbox"), "set")
+    expect(screen.queryByRole("option", { name: /Home/ })).not.toBeInTheDocument()
+    expect(screen.getByRole("option", { name: /Settings/ })).toBeInTheDocument()
+  })
+
   it("フィルタリングでハイライト中のアイテムが消えたとき Enter が残ったアイテムを選択できる", async () => {
     const onSettings = vi.fn()
     render(

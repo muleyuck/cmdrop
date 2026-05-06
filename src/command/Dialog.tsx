@@ -6,10 +6,11 @@ import { useCommand } from "./context"
 interface DialogProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode
   shortcut?: string
+  autoFocus?: boolean
 }
 
-export function Dialog({ children, shortcut: _shortcut, ...rest }: DialogProps) {
-  const { open, setOpen } = useCommand()
+export function Dialog({ children, shortcut: _shortcut, autoFocus = true, ...rest }: DialogProps) {
+  const { open, setOpen, inputRef } = useCommand()
   const dialogRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -22,6 +23,11 @@ export function Dialog({ children, shortcut: _shortcut, ...rest }: DialogProps) 
     document.addEventListener("pointerdown", handlePointerDown)
     return () => document.removeEventListener("pointerdown", handlePointerDown)
   }, [open, setOpen])
+
+  useEffect(() => {
+    if (!open || !autoFocus) return
+    inputRef.current?.focus()
+  }, [open, autoFocus, inputRef])
 
   if (!open) return null
 
