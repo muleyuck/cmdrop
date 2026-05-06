@@ -29,15 +29,11 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
     [controlledOpen, onOpenChange],
   )
 
-  const openRef = useRef(open)
-  openRef.current = open
-  const setOpenRef = useRef(setOpen)
-  setOpenRef.current = setOpen
-
   const highlightedRef = useRef(highlightedValue)
   highlightedRef.current = highlightedValue
 
   const itemsRef = useRef<RegisteredItem[]>([])
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const registerItem = useCallback((value: string, onSelect: () => void) => {
     const existing = itemsRef.current.find((i) => i.value === value)
@@ -59,16 +55,19 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.isComposing) return
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault()
+        setOpen(!open)
+        return
+      }
+      if (!open) return
       const list = itemsRef.current
       const current = highlightedRef.current
       const idx = list.findIndex((i) => i.value === (current ?? ""))
 
-      if (e.key === "Escape" && openRef.current) {
+      if (e.key === "Escape") {
         e.preventDefault()
-        setOpenRef.current(false)
-      } else if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault()
-        setOpenRef.current(!openRef.current)
+        setOpen(false)
       } else if (e.key === "ArrowDown") {
         e.preventDefault()
         const next = idx < list.length - 1 ? list[idx + 1] : list[0]
@@ -87,7 +86,7 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
     }
     document.addEventListener("keydown", handleKeyDown)
     return () => document.removeEventListener("keydown", handleKeyDown)
-  }, [])
+  }, [open, setOpen])
 
   const ctx: CommandContextValue = useMemo(
     () => ({
@@ -100,6 +99,7 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
       registerItem,
       unregisterItem,
       itemCount,
+      inputRef,
     }),
     [open, setOpen, query, highlightedValue, registerItem, unregisterItem, itemCount],
   )
