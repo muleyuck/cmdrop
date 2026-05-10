@@ -44,7 +44,6 @@ export function Item({ value, disabled = false, children, ...rest }: ItemProps) 
       aria-selected={isSelected}
       aria-disabled={disabled || undefined}
       tabIndex={disabled ? undefined : -1}
-      data-cmdrop-item=""
       {...(isSelected ? { "data-selected": "" } : {})}
       {...(disabled ? { "data-disabled": "" } : {})}
       {...(isHighlighted ? { "data-highlighted": "" } : {})}

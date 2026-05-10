@@ -9,7 +9,6 @@ export function Input({ onChange, ...props }: InputProps) {
   return (
     <input
       ref={inputRef}
-      data-cmdrop-command-input=""
       onChange={(e) => {
         setQuery(e.target.value)
         onChange?.(e)

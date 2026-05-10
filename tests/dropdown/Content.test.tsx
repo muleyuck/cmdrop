@@ -26,7 +26,6 @@ describe("Dropdown.Content", () => {
     )
     await user.click(screen.getByRole("button"))
     expect(screen.getByRole("listbox")).toBeInTheDocument()
-    expect(screen.getByRole("listbox")).toHaveAttribute("data-cmdrop-content")
     expect(screen.getByRole("listbox")).toHaveAttribute("data-state", "open")
   })
 

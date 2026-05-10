@@ -11,7 +11,7 @@ export function Empty({ children, ...rest }: EmptyProps) {
   if (itemCount > 0) return null
 
   return (
-    <div {...rest} data-cmdrop-command-empty="" aria-live="polite">
+    <div {...rest} aria-live="polite">
       {children}
     </div>
   )

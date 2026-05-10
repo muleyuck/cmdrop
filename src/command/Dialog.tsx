@@ -20,7 +20,7 @@ export function Dialog({ children, shortcut: _shortcut, autoFocus = true, ...res
   if (!open) return null
 
   return createPortal(
-    <div role="dialog" aria-modal="true" data-cmdrop-command-dialog="" {...rest}>
+    <div role="dialog" aria-modal="true" {...rest}>
       {children}
     </div>,
     document.body,

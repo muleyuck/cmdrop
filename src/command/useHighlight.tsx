@@ -16,9 +16,7 @@ export function useHighlight({ className }: UseHighlightOptions = {}): (text: st
       return (
         <span>
           {text.slice(0, idx)}
-          <span className={className} data-cmdrop-command-highlight="">
-            {text.slice(idx, idx + query.length)}
-          </span>
+          <span className={className}>{text.slice(idx, idx + query.length)}</span>
           {text.slice(idx + query.length)}
         </span>
       )

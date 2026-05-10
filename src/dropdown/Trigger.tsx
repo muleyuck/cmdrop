@@ -33,7 +33,6 @@ export function Trigger({ children, onClick, onKeyDown, ...rest }: TriggerProps)
       aria-haspopup="listbox"
       aria-expanded={open}
       aria-controls={open ? contentId : undefined}
-      data-cmdrop-trigger=""
       data-state={open ? "open" : "closed"}
       onClick={(e) => {
         setOpen(!open)

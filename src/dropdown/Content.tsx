@@ -131,7 +131,6 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
       role="listbox"
       aria-labelledby={triggerId}
       tabIndex={-1}
-      data-cmdrop-content=""
       data-state="open"
       data-side={pos.side}
       onKeyDown={onKeyDown}

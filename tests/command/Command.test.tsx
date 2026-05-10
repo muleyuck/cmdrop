@@ -6,9 +6,9 @@ import { Input } from "../../src/command/Input"
 import { Item } from "../../src/command/Item"
 import { List } from "../../src/command/List"
 
-function setup(open?: boolean, onOpenChange?: (open: boolean) => void) {
+function setup(open = false, onOpenChange?: (open: boolean) => void) {
   return render(
-    <Command open={open} onOpenChange={onOpenChange}>
+    <Command open={open} {...(onOpenChange ? { onOpenChange } : {})}>
       <Dialog>
         <Input />
         <List>
@@ -29,7 +29,6 @@ describe("Command + Dialog", () => {
     setup(true)
     const dialog = screen.getByRole("dialog")
     expect(dialog).toBeInTheDocument()
-    expect(dialog).toHaveAttribute("data-cmdrop-command-dialog")
     expect(dialog).toHaveAttribute("aria-modal", "true")
   })
 })

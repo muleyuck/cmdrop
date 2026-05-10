@@ -6,7 +6,7 @@ interface ListProps extends HTMLAttributes<HTMLDivElement> {
 
 export function List({ children, ...rest }: ListProps) {
   return (
-    <div role="listbox" data-cmdrop-command-list="" {...rest}>
+    <div role="listbox" {...rest}>
       {children}
     </div>
   )

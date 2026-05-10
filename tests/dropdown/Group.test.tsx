@@ -10,7 +10,7 @@ import { Separator } from "../../src/dropdown/Separator"
 import { Trigger } from "../../src/dropdown/Trigger"
 
 describe("Dropdown.Group", () => {
-  it("role=group と data-cmdrop-group でレンダリングされる", async () => {
+  it("role=group としてレンダリングされる", async () => {
     const user = userEvent.setup()
     render(
       <Dropdown>
@@ -23,7 +23,7 @@ describe("Dropdown.Group", () => {
       </Dropdown>,
     )
     await user.click(screen.getByRole("button"))
-    expect(screen.getByRole("group")).toHaveAttribute("data-cmdrop-group")
+    expect(screen.getByRole("group")).toBeInTheDocument()
   })
 
   it("label があれば aria-labelledby でラベルを参照する", async () => {
@@ -41,8 +41,23 @@ describe("Dropdown.Group", () => {
     await user.click(screen.getByRole("button"))
     const group = screen.getByRole("group")
     const label = screen.getByText("Fruits")
-    expect(label).toHaveAttribute("data-cmdrop-group-label")
     expect(group).toHaveAttribute("aria-labelledby", label.id)
+  })
+
+  it("labelClassName がラベル要素に適用される", async () => {
+    const user = userEvent.setup()
+    render(
+      <Dropdown>
+        <Trigger>Open</Trigger>
+        <Content>
+          <Group label="Fruits" labelClassName="text-xs font-bold">
+            <Item value="apple">Apple</Item>
+          </Group>
+        </Content>
+      </Dropdown>,
+    )
+    await user.click(screen.getByRole("button"))
+    expect(screen.getByText("Fruits")).toHaveClass("text-xs", "font-bold")
   })
 
   it("label がなければ aria-labelledby を持たない", async () => {
@@ -63,7 +78,7 @@ describe("Dropdown.Group", () => {
 })
 
 describe("Dropdown.Separator", () => {
-  it("role=separator と data-cmdrop-separator でレンダリングされる", async () => {
+  it("role=separator としてレンダリングされる", async () => {
     const user = userEvent.setup()
     render(
       <Dropdown>
@@ -76,12 +91,12 @@ describe("Dropdown.Separator", () => {
       </Dropdown>,
     )
     await user.click(screen.getByRole("button"))
-    expect(screen.getByRole("separator")).toHaveAttribute("data-cmdrop-separator")
+    expect(screen.getByRole("separator")).toBeInTheDocument()
   })
 })
 
 describe("Dropdown.Empty", () => {
-  it("data-cmdrop-empty と aria-live=polite を持つ", async () => {
+  it("aria-live=polite を持つ", async () => {
     const user = userEvent.setup()
     render(
       <Dropdown>
@@ -93,7 +108,6 @@ describe("Dropdown.Empty", () => {
     )
     await user.click(screen.getByRole("button"))
     const empty = screen.getByText("No results")
-    expect(empty).toHaveAttribute("data-cmdrop-empty")
     expect(empty).toHaveAttribute("aria-live", "polite")
   })
 })

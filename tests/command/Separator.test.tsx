@@ -7,6 +7,5 @@ describe("Separator", () => {
     const { container } = render(<Separator />)
     const hr = container.querySelector("hr")
     expect(hr).toBeInTheDocument()
-    expect(hr).toHaveAttribute("data-cmdrop-command-separator")
   })
 })

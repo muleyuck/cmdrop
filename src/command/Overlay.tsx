@@ -22,8 +22,5 @@ export function Overlay({ className, ...rest }: OverlayProps) {
 
   if (!open) return null
 
-  return createPortal(
-    <div ref={overlayRef} className={className} data-cmdrop-command-overlay="" {...rest} />,
-    document.body,
-  )
+  return createPortal(<div ref={overlayRef} role="presentation" className={className} {...rest} />, document.body)
 }

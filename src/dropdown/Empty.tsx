@@ -6,7 +6,7 @@ interface EmptyProps extends HTMLAttributes<HTMLDivElement> {
 
 export function Empty({ children, ...rest }: EmptyProps) {
   return (
-    <div {...rest} data-cmdrop-empty="" aria-live="polite">
+    <div {...rest} aria-live="polite">
       {children}
     </div>
   )

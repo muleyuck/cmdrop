@@ -6,7 +6,7 @@ import { Dialog } from "../../src/command/Dialog"
 import { Input } from "../../src/command/Input"
 import { Overlay } from "../../src/command/Overlay"
 
-function setup(open?: boolean, onOpenChange?: (open: boolean) => void) {
+function setup(open = false, onOpenChange = () => {}) {
   return render(
     <Command open={open} onOpenChange={onOpenChange}>
       <Overlay />
@@ -20,12 +20,12 @@ function setup(open?: boolean, onOpenChange?: (open: boolean) => void) {
 describe("Overlay", () => {
   it("open のとき overlay がレンダリングされる", () => {
     setup(true)
-    expect(document.querySelector("[data-cmdrop-command-overlay]")).toBeInTheDocument()
+    expect(screen.getByRole("presentation")).toBeInTheDocument()
   })
 
   it("open=false のとき overlay はレンダリングされない", () => {
     setup(false)
-    expect(document.querySelector("[data-cmdrop-command-overlay]")).not.toBeInTheDocument()
+    expect(screen.queryByRole("presentation")).not.toBeInTheDocument()
   })
 
   it("className が overlay 要素に適用される", () => {
@@ -34,13 +34,13 @@ describe("Overlay", () => {
         <Overlay className="bg-black/60 backdrop-blur" />
       </Command>,
     )
-    expect(document.querySelector("[data-cmdrop-command-overlay]")).toHaveClass("bg-black/60", "backdrop-blur")
+    expect(screen.getByRole("presentation")).toHaveClass("bg-black/60", "backdrop-blur")
   })
 
   it("overlay をクリックするとダイアログが閉じる", async () => {
     const onOpenChange = vi.fn()
     setup(true, onOpenChange)
-    await userEvent.click(document.querySelector("[data-cmdrop-command-overlay]") as Element)
+    await userEvent.click(screen.getByRole("presentation"))
     expect(onOpenChange).toHaveBeenCalledWith(false)
   })
 

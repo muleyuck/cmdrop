@@ -14,7 +14,6 @@ describe("Group", () => {
       </Command>,
     )
     expect(screen.getByRole("group")).toBeInTheDocument()
-    expect(screen.getByRole("group")).toHaveAttribute("data-cmdrop-command-group")
   })
 
   it("label を指定するとラベルが表示される", () => {

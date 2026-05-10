@@ -5,7 +5,7 @@ import { Command } from "../../src/command/Command"
 import { Input } from "../../src/command/Input"
 import { useHighlight } from "../../src/command/useHighlight"
 
-function HighlightTest({ text, className }: { text: string; className?: string }) {
+function HighlightTest({ text, className = "hl" }: { text: string; className?: string }) {
   const highlight = useHighlight({ className })
   return <div data-testid="result">{highlight(text)}</div>
 }
@@ -23,29 +23,29 @@ describe("useHighlight", () => {
   it("クエリが空のときはテキストをそのまま返す", () => {
     setup()
     expect(screen.getByTestId("result")).toHaveTextContent("Calendar")
-    expect(screen.getByTestId("result").querySelector("[data-cmdrop-command-highlight]")).toBeNull()
+    expect(screen.getByTestId("result").querySelector(".hl")).toBeNull()
   })
 
-  it("クエリに一致する部分を data-cmdrop-command-highlight でラップする", async () => {
+  it("クエリに一致する部分をハイライト span でラップする", async () => {
     setup()
     await userEvent.type(screen.getByRole("textbox"), "cal")
-    const span = screen.getByTestId("result").querySelector("[data-cmdrop-command-highlight]")
-    expect(span).toBeInTheDocument()
-    expect(span).toHaveTextContent("Cal")
+    const hl = screen.getByTestId("result").querySelector(".hl")
+    expect(hl).toBeInTheDocument()
+    expect(hl).toHaveTextContent("Cal")
   })
 
   it("大文字小文字を区別しない", async () => {
     setup()
     await userEvent.type(screen.getByRole("textbox"), "CAL")
-    const span = screen.getByTestId("result").querySelector("[data-cmdrop-command-highlight]")
-    expect(span).toBeInTheDocument()
-    expect(span).toHaveTextContent("Cal")
+    const hl = screen.getByTestId("result").querySelector(".hl")
+    expect(hl).toBeInTheDocument()
+    expect(hl).toHaveTextContent("Cal")
   })
 
   it("マッチしない場合はハイライトなし", async () => {
     setup()
     await userEvent.type(screen.getByRole("textbox"), "xyz")
-    expect(screen.getByTestId("result").querySelector("[data-cmdrop-command-highlight]")).toBeNull()
+    expect(screen.getByTestId("result").querySelector(".hl")).toBeNull()
     expect(screen.getByTestId("result")).toHaveTextContent("Calendar")
   })
 
@@ -54,8 +54,7 @@ describe("useHighlight", () => {
     await userEvent.type(screen.getByRole("textbox"), "tti")
     const result = screen.getByTestId("result")
     expect(result).toHaveTextContent("Settings")
-    const span = result.querySelector("[data-cmdrop-command-highlight]")
-    expect(span).toHaveTextContent("tti")
+    expect(result.querySelector(".hl")).toHaveTextContent("tti")
   })
 
   it("className オプションがハイライト span に適用される", async () => {
@@ -66,7 +65,6 @@ describe("useHighlight", () => {
       </Command>,
     )
     await userEvent.type(screen.getByRole("textbox"), "cal")
-    const span = screen.getByTestId("result").querySelector("[data-cmdrop-command-highlight]")
-    expect(span).toHaveClass("text-indigo-400", "font-bold")
+    expect(screen.getByTestId("result").querySelector(".text-indigo-400")).toHaveClass("text-indigo-400", "font-bold")
   })
 })

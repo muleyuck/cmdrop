@@ -32,7 +32,6 @@ export function Item({ onSelect, value: valueProp, disabled = false, children, .
       role="option"
       aria-disabled={disabled || undefined}
       tabIndex={disabled ? -1 : 0}
-      data-cmdrop-command-item=""
       {...(isHighlighted ? { "data-highlighted": "" } : {})}
       onClick={() => {
         if (!disabled) onSelect()
