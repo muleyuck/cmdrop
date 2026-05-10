@@ -1,4 +1,4 @@
-import { type HTMLAttributes, type ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react"
+import { type HTMLAttributes, type ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import { useDropdown } from "./context"
 
@@ -37,28 +37,43 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
     ready: false,
   })
 
-  // Calculate position before paint to avoid flicker
   // biome-ignore lint/correctness/useExhaustiveDependencies: triggerRef/contentRef are stable refs; .current is intentionally excluded per React ref convention
-  useLayoutEffect(() => {
-    if (!open || !triggerRef.current || !contentRef.current) {
-      setPos((p) => ({ ...p, ready: false }))
-      return
-    }
+  const updatePosition = useCallback(() => {
+    if (!triggerRef.current || !contentRef.current) return
     const trigger = triggerRef.current.getBoundingClientRect()
     const content = contentRef.current.getBoundingClientRect()
     const spaceBelow = window.innerHeight - trigger.bottom
-
-    const side: "top" | "bottom" = spaceBelow >= content.height || spaceBelow >= trigger.top ? "bottom" : "top"
+    const side: "top" | "bottom" =
+      spaceBelow >= content.height || spaceBelow >= trigger.top ? "bottom" : "top"
     const top = side === "bottom" ? trigger.bottom : trigger.top - content.height
+    setPos({ top, left: trigger.left, width: trigger.width, side, ready: true })
+  }, [triggerRef, contentRef])
 
-    setPos({
-      top,
-      left: trigger.left,
-      width: trigger.width,
-      side,
-      ready: true,
-    })
-  }, [open])
+  // Calculate position before paint to avoid flicker
+  useLayoutEffect(() => {
+    if (!open) {
+      setPos((p) => ({ ...p, ready: false }))
+      return
+    }
+    updatePosition()
+  }, [open, updatePosition])
+
+  // Reposition on scroll (capture mode covers all ancestor scrolls)
+  useEffect(() => {
+    if (!open) return
+    document.addEventListener("scroll", updatePosition, { capture: true, passive: true })
+    return () => document.removeEventListener("scroll", updatePosition, true)
+  }, [open, updatePosition])
+
+  // Reposition on viewport resize (documentElement) and content height changes (contentRef)
+  // biome-ignore lint/correctness/useExhaustiveDependencies: contentRef is a stable ref; .current is intentionally excluded per React ref convention
+  useEffect(() => {
+    if (!open) return
+    const observer = new ResizeObserver(updatePosition)
+    observer.observe(document.documentElement)
+    if (contentRef.current) observer.observe(contentRef.current)
+    return () => observer.disconnect()
+  }, [open, updatePosition, contentRef])
 
   // Close on outside click (pointerdown covers mouse and touch)
   useEffect(() => {
@@ -71,14 +86,6 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
     document.addEventListener("pointerdown", onPointerDown)
     return () => document.removeEventListener("pointerdown", onPointerDown)
   }, [open, setOpen, triggerRef, contentRef])
-
-  // Close on scroll
-  useEffect(() => {
-    if (!open) return
-    const onScroll = () => setOpen(false)
-    document.addEventListener("scroll", onScroll, { capture: true })
-    return () => document.removeEventListener("scroll", onScroll, { capture: true })
-  }, [open, setOpen])
 
   // Set initial highlight when opened via keyboard (runs after Item effects register items)
   useEffect(() => {
