@@ -40,6 +40,11 @@
       "bracketSpacing": true
     }
   },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
   "json": {
     "formatter": {
       "enabled": false
