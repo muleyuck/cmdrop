@@ -1,7 +1,9 @@
 import { render, screen } from "@testing-library/react"
+import userEvent from "@testing-library/user-event"
 import { describe, expect, it, vi } from "vitest"
 import { Command } from "../../src/command/Command"
 import { Group } from "../../src/command/Group"
+import { Input } from "../../src/command/Input"
 import { Item } from "../../src/command/Item"
 
 describe("Group", () => {
@@ -48,5 +50,32 @@ describe("Group", () => {
       </Command>,
     )
     expect(screen.getByText("Navigation")).toHaveClass("text-xs", "font-bold")
+  })
+
+  it("フィルタで全アイテムが非表示になると Group が非表示になる", async () => {
+    render(
+      <Command open>
+        <Input />
+        <Group label="Navigation">
+          <Item onSelect={vi.fn()}>Home</Item>
+        </Group>
+      </Command>,
+    )
+    expect(screen.getByRole("group")).toBeInTheDocument()
+    await userEvent.type(screen.getByRole("textbox"), "xyz")
+    expect(screen.queryByRole("group")).not.toBeInTheDocument()
+  })
+
+  it("forceMount のとき全アイテムが非表示でも Group が表示される", async () => {
+    render(
+      <Command open>
+        <Input />
+        <Group label="Navigation" forceMount>
+          <Item onSelect={vi.fn()}>Home</Item>
+        </Group>
+      </Command>,
+    )
+    await userEvent.type(screen.getByRole("textbox"), "xyz")
+    expect(screen.getByRole("group")).toBeInTheDocument()
   })
 })

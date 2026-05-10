@@ -1,6 +1,7 @@
 import type { HTMLAttributes, ReactNode } from "react"
-import { useEffect, useRef } from "react"
+import { useLayoutEffect, useRef } from "react"
 import { useCommand } from "./context"
+import { useGroupContext } from "./Group"
 
 interface ItemProps extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
   onSelect: () => void
@@ -11,6 +12,7 @@ interface ItemProps extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
 
 export function Item({ onSelect, value: valueProp, disabled = false, children, ...rest }: ItemProps) {
   const { query, highlightedValue, registerItem, unregisterItem } = useCommand()
+  const groupCtx = useGroupContext()
 
   const value = valueProp ?? (typeof children === "string" ? children : "")
   const isHighlighted = value !== "" && highlightedValue === value
@@ -19,11 +21,21 @@ export function Item({ onSelect, value: valueProp, disabled = false, children, .
   const onSelectRef = useRef(onSelect)
   onSelectRef.current = onSelect
 
-  useEffect(() => {
-    if (!value || disabled || !isVisible) return
-    registerItem(value, () => onSelectRef.current())
-    return () => unregisterItem(value)
-  }, [value, disabled, isVisible, registerItem, unregisterItem])
+  useLayoutEffect(() => {
+    if (!value || !isVisible) {
+      return
+    }
+    if (!disabled) {
+      registerItem(value, () => onSelectRef.current())
+    }
+    groupCtx?.notifyVisible(value, true)
+    return () => {
+      if (!disabled) {
+        unregisterItem(value)
+      }
+      groupCtx?.notifyVisible(value, false)
+    }
+  }, [value, disabled, isVisible, registerItem, unregisterItem, groupCtx])
 
   if (!isVisible) return null
 
