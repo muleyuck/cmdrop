@@ -85,4 +85,35 @@ describe("Command filtering", () => {
     })
     expect(onSettings).toHaveBeenCalledTimes(1)
   })
+
+  it("閉じて再度開くとクエリがクリアされる", async () => {
+    const onOpenChange = vi.fn()
+    render(
+      <Command open onOpenChange={onOpenChange}>
+        <Input />
+        <List>
+          <Item onSelect={vi.fn()}>Home</Item>
+          <Item onSelect={vi.fn()}>Settings</Item>
+        </List>
+      </Command>,
+    )
+    await userEvent.type(screen.getByRole("textbox"), "set")
+    expect(screen.queryByRole("option", { name: "Home" })).not.toBeInTheDocument()
+
+    act(() => {
+      document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }))
+    })
+
+    render(
+      <Command open>
+        <Input />
+        <List>
+          <Item onSelect={vi.fn()}>Home</Item>
+          <Item onSelect={vi.fn()}>Settings</Item>
+        </List>
+      </Command>,
+    )
+    expect(screen.getAllByRole("option", { name: "Home" })[0]).toBeInTheDocument()
+    expect(screen.getAllByRole("option", { name: "Settings" })[0]).toBeInTheDocument()
+  })
 })

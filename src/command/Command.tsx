@@ -22,7 +22,10 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
 
   const setOpen = useCallback(
     (next: boolean) => {
-      if (!next) setHighlightedValue(null)
+      if (!next) {
+        setHighlightedValue(null)
+        setQuery("")
+      }
       if (controlledOpen === undefined) setInternalOpen(next)
       onOpenChange?.(next)
     },
