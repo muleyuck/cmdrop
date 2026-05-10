@@ -146,6 +146,61 @@ describe("Dropdown.Item", () => {
     expect(onValueChange).toHaveBeenLastCalledWith(expect.arrayContaining(["apple", "banana"]))
   })
 
+  it("onSelect コールバックがクリック時に呼ばれる", async () => {
+    const user = userEvent.setup()
+    const onSelect = vi.fn()
+    render(
+      <Dropdown>
+        <Trigger>Open</Trigger>
+        <Content>
+          <Item value="apple" onSelect={onSelect}>
+            Apple
+          </Item>
+        </Content>
+      </Dropdown>,
+    )
+    await user.click(screen.getByRole("button"))
+    await user.click(screen.getByText("Apple"))
+    expect(onSelect).toHaveBeenCalledOnce()
+  })
+
+  it("onSelect コールバックが Enter キーで呼ばれる", async () => {
+    const user = userEvent.setup()
+    const onSelect = vi.fn()
+    render(
+      <Dropdown>
+        <Trigger>Open</Trigger>
+        <Content>
+          <Item value="apple" onSelect={onSelect}>
+            Apple
+          </Item>
+        </Content>
+      </Dropdown>,
+    )
+    await user.click(screen.getByRole("button"))
+    screen.getByText("Apple").focus()
+    await user.keyboard("{Enter}")
+    expect(onSelect).toHaveBeenCalledOnce()
+  })
+
+  it("disabled アイテムの onSelect は呼ばれない", async () => {
+    const user = userEvent.setup()
+    const onSelect = vi.fn()
+    render(
+      <Dropdown>
+        <Trigger>Open</Trigger>
+        <Content>
+          <Item value="apple" disabled onSelect={onSelect}>
+            Apple
+          </Item>
+        </Content>
+      </Dropdown>,
+    )
+    await user.click(screen.getByRole("button"))
+    await user.click(screen.getByText("Apple"))
+    expect(onSelect).not.toHaveBeenCalled()
+  })
+
   it("複数選択: クリック後に data-selected が付く (uncontrolled)", async () => {
     const user = userEvent.setup()
     render(

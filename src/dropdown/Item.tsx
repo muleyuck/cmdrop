@@ -4,10 +4,11 @@ import { useDropdown } from "./context"
 interface ItemProps extends Omit<HTMLAttributes<HTMLDivElement>, "onClick" | "onKeyDown"> {
   value: string
   disabled?: boolean
+  onSelect?: () => void
   children: ReactNode
 }
 
-export function Item({ value, disabled = false, children, ...rest }: ItemProps) {
+export function Item({ value, disabled = false, onSelect: onSelectProp, children, ...rest }: ItemProps) {
   const { selectedValues, onSelect, highlightedValue, items } = useDropdown()
 
   const isSelected = selectedValues.has(value)
@@ -27,13 +28,13 @@ export function Item({ value, disabled = false, children, ...rest }: ItemProps) 
   const handleSelect = () => {
     if (disabled) return
     onSelect(value)
+    onSelectProp?.()
   }
 
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (disabled) return
     if (e.key === "Enter") {
       e.preventDefault()
-      onSelect(value)
+      handleSelect()
     }
   }
 
