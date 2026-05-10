@@ -56,7 +56,7 @@
           "target": "components/ui/dropdown/index.ts"
         }
       ]
-    }
+    },
     {
       "name": "command",
       "type": "registry:ui",
@@ -108,6 +108,16 @@
           "path": "src/command/Empty.tsx",
           "type": "registry:ui",
           "target": "components/ui/command/Empty.tsx"
+        },
+        {
+          "path": "src/command/Overlay.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/command/Overlay.tsx"
+        },
+        {
+          "path": "src/command/useHighlight.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/command/useHighlight.tsx"
         },
         {
           "path": "src/command/index.ts",

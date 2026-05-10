@@ -39,4 +39,15 @@ describe("Group", () => {
     const group = screen.getByRole("group")
     expect(group).toHaveAttribute("aria-labelledby")
   })
+
+  it("labelClassName がラベル要素に適用される", () => {
+    render(
+      <Command open>
+        <Group label="Navigation" labelClassName="text-xs font-bold">
+          <Item onSelect={vi.fn()}>Home</Item>
+        </Group>
+      </Command>,
+    )
+    expect(screen.getByText("Navigation")).toHaveClass("text-xs", "font-bold")
+  })
 })

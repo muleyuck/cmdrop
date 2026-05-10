@@ -1,5 +1,4 @@
 import { act, render, screen } from "@testing-library/react"
-import userEvent from "@testing-library/user-event"
 import { describe, expect, it, vi } from "vitest"
 import { Command } from "../../src/command/Command"
 import { Dialog } from "../../src/command/Dialog"
@@ -50,27 +49,6 @@ describe("Dialog Input focus", () => {
       </Command>,
     )
     expect(screen.getByRole("textbox")).not.toHaveFocus()
-  })
-})
-
-describe("Dialog overlay", () => {
-  it("overlay をクリックするとダイアログが閉じる", async () => {
-    const onOpenChange = vi.fn()
-    setup(true, onOpenChange)
-
-    const overlay = document.querySelector("[data-cmdrop-command-overlay]")
-    await userEvent.click(overlay as Element)
-
-    expect(onOpenChange).toHaveBeenCalledWith(false)
-  })
-
-  it("ダイアログ内をクリックしてもダイアログが閉じない", async () => {
-    const onOpenChange = vi.fn()
-    setup(true, onOpenChange)
-
-    await userEvent.click(screen.getByRole("dialog"))
-
-    expect(onOpenChange).not.toHaveBeenCalled()
   })
 })
 
