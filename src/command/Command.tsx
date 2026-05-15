@@ -1,4 +1,4 @@
-import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { type ReactNode, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import { CommandContext, type CommandContextValue } from "./context"
 
 interface CommandProps {
@@ -10,6 +10,7 @@ interface CommandProps {
 interface RegisteredItem {
   value: string
   onSelect: () => void
+  active: boolean
 }
 
 export function Command({ open: controlledOpen, onOpenChange, children }: CommandProps) {
@@ -22,15 +23,18 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
 
   const setOpen = useCallback(
     (next: boolean) => {
-      if (!next) {
-        setHighlightedValue(null)
-        setQuery("")
-      }
       if (controlledOpen === undefined) setInternalOpen(next)
       onOpenChange?.(next)
     },
     [controlledOpen, onOpenChange],
   )
+
+  useEffect(() => {
+    if (!open) {
+      setHighlightedValue(null)
+      setQuery("")
+    }
+  }, [open])
 
   const highlightedRef = useRef(highlightedValue)
   highlightedRef.current = highlightedValue
@@ -39,21 +43,35 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
   const inputRef = useRef<HTMLInputElement>(null)
 
   const registerItem = useCallback((value: string, onSelect: () => void) => {
-    const existing = itemsRef.current.find((i) => i.value === value)
-    if (existing) {
-      existing.onSelect = onSelect
-    } else {
-      itemsRef.current.push({ value, onSelect })
-      setItemCount((c) => c + 1)
-    }
+    if (itemsRef.current.some((i) => i.value === value)) return
+    itemsRef.current.push({ value, onSelect, active: false })
   }, [])
 
   const unregisterItem = useCallback((value: string) => {
-    const existed = itemsRef.current.some((i) => i.value === value)
+    const item = itemsRef.current.find((i) => i.value === value)
+    if (!item) return
+    if (item.active) {
+      setItemCount((c) => c - 1)
+      if (highlightedRef.current === value) setHighlightedValue(null)
+    }
     itemsRef.current = itemsRef.current.filter((i) => i.value !== value)
-    if (existed) setItemCount((c) => c - 1)
-    if (highlightedRef.current === value) setHighlightedValue(null)
   }, [])
+
+  const setItemActive = useCallback((value: string, active: boolean) => {
+    const item = itemsRef.current.find((i) => i.value === value)
+    if (!item || item.active === active) return
+    item.active = active
+    setItemCount((c) => c + (active ? 1 : -1))
+    if (!active && highlightedRef.current === value) setHighlightedValue(null)
+  }, [])
+
+  useLayoutEffect(() => {
+    if (!query) {
+      setHighlightedValue(null)
+      return
+    }
+    setHighlightedValue(itemsRef.current.find((i) => i.active)?.value ?? null)
+  }, [query])
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -64,7 +82,7 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
         return
       }
       if (!open) return
-      const list = itemsRef.current
+      const list = itemsRef.current.filter((i) => i.active)
       const current = highlightedRef.current
       const idx = list.findIndex((i) => i.value === (current ?? ""))
 
@@ -101,10 +119,11 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
       setHighlightedValue,
       registerItem,
       unregisterItem,
+      setItemActive,
       itemCount,
       inputRef,
     }),
-    [open, setOpen, query, highlightedValue, registerItem, unregisterItem, itemCount],
+    [open, setOpen, query, highlightedValue, registerItem, unregisterItem, setItemActive, itemCount],
   )
 
   return <CommandContext.Provider value={ctx}>{children}</CommandContext.Provider>

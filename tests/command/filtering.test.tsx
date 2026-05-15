@@ -86,6 +86,88 @@ describe("Command filtering", () => {
     expect(onSettings).toHaveBeenCalledTimes(1)
   })
 
+  it("クエリクリア後の ArrowDown ナビゲーションが元の順序になる", async () => {
+    setup()
+    await userEvent.type(screen.getByRole("textbox"), "set")
+    await userEvent.clear(screen.getByRole("textbox"))
+
+    act(() => {
+      document.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }))
+    })
+
+    expect(screen.getByRole("option", { name: "Home" })).toHaveAttribute("data-highlighted")
+    expect(screen.getByRole("option", { name: "Settings" })).not.toHaveAttribute("data-highlighted")
+  })
+
+  it("クエリを入力すると先頭の一致アイテムが自動ハイライトされる", async () => {
+    setup()
+    await userEvent.type(screen.getByRole("textbox"), "set")
+    expect(screen.getByRole("option", { name: "Settings" })).toHaveAttribute("data-highlighted")
+  })
+
+  it("自動ハイライト状態で Enter を押すと onSelect が呼ばれる", async () => {
+    const onSettings = vi.fn()
+    render(
+      <Command open>
+        <Input />
+        <List>
+          <Item onSelect={vi.fn()}>Home</Item>
+          <Item onSelect={onSettings}>Settings</Item>
+        </List>
+      </Command>,
+    )
+    await userEvent.type(screen.getByRole("textbox"), "set")
+    act(() => {
+      document.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }))
+    })
+    expect(onSettings).toHaveBeenCalledTimes(1)
+  })
+
+  it("クエリをクリアするとハイライトがリセットされる", async () => {
+    setup()
+    await userEvent.type(screen.getByRole("textbox"), "set")
+    expect(screen.getByRole("option", { name: "Settings" })).toHaveAttribute("data-highlighted")
+    await userEvent.clear(screen.getByRole("textbox"))
+    expect(screen.getByRole("option", { name: "Home" })).not.toHaveAttribute("data-highlighted")
+    expect(screen.getByRole("option", { name: "Settings" })).not.toHaveAttribute("data-highlighted")
+  })
+
+  it("onSelect 後に open=false にするとクエリがクリアされる", async () => {
+    const onSettings = vi.fn()
+    const { rerender } = render(
+      <Command open>
+        <Input />
+        <List>
+          <Item onSelect={vi.fn()}>Home</Item>
+          <Item onSelect={onSettings}>Settings</Item>
+        </List>
+      </Command>,
+    )
+    await userEvent.type(screen.getByRole("textbox"), "set")
+    expect(screen.queryByRole("option", { name: "Home" })).not.toBeInTheDocument()
+
+    rerender(
+      <Command open={false}>
+        <Input />
+        <List>
+          <Item onSelect={vi.fn()}>Home</Item>
+          <Item onSelect={onSettings}>Settings</Item>
+        </List>
+      </Command>,
+    )
+    rerender(
+      <Command open>
+        <Input />
+        <List>
+          <Item onSelect={vi.fn()}>Home</Item>
+          <Item onSelect={onSettings}>Settings</Item>
+        </List>
+      </Command>,
+    )
+    expect(screen.getByRole("option", { name: "Home" })).toBeInTheDocument()
+    expect(screen.getByRole("option", { name: "Settings" })).toBeInTheDocument()
+  })
+
   it("閉じて再度開くとクエリがクリアされる", async () => {
     const onOpenChange = vi.fn()
     render(

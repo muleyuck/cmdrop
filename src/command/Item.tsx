@@ -11,7 +11,7 @@ interface ItemProps extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
 }
 
 export function Item({ onSelect, value: valueProp, disabled = false, children, ...rest }: ItemProps) {
-  const { query, highlightedValue, registerItem, unregisterItem } = useCommand()
+  const { query, highlightedValue, registerItem, unregisterItem, setItemActive } = useCommand()
   const groupCtx = useGroupContext()
 
   const value = valueProp ?? (typeof children === "string" ? children : "")
@@ -21,21 +21,20 @@ export function Item({ onSelect, value: valueProp, disabled = false, children, .
   const onSelectRef = useRef(onSelect)
   onSelectRef.current = onSelect
 
+  // Lifecycle: register on mount, unregister on unmount
   useLayoutEffect(() => {
-    if (!value || !isVisible) {
-      return
-    }
-    if (!disabled) {
-      registerItem(value, () => onSelectRef.current())
-    }
-    groupCtx?.notifyVisible(value, true)
-    return () => {
-      if (!disabled) {
-        unregisterItem(value)
-      }
-      groupCtx?.notifyVisible(value, false)
-    }
-  }, [value, disabled, isVisible, registerItem, unregisterItem, groupCtx])
+    if (!value || disabled) return
+    registerItem(value, () => onSelectRef.current())
+    return () => unregisterItem(value)
+  }, [value, disabled, registerItem, unregisterItem])
+
+  // Visibility: toggle active and notify Group
+  useLayoutEffect(() => {
+    if (!value || disabled) return
+    setItemActive(value, isVisible)
+    groupCtx?.notifyVisible(value, isVisible)
+    return () => groupCtx?.notifyVisible(value, false)
+  }, [value, isVisible, disabled, setItemActive, groupCtx])
 
   if (!isVisible) return null
 

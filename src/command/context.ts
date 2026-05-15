@@ -10,6 +10,7 @@ export interface CommandContextValue {
   setHighlightedValue: (value: string | null) => void
   registerItem: (value: string, onSelect: () => void) => void
   unregisterItem: (value: string) => void
+  setItemActive: (value: string, active: boolean) => void
   itemCount: number
   inputRef: RefObject<HTMLInputElement | null>
 }
