@@ -13,7 +13,11 @@ export interface DropdownContextValue {
   highlightedValue: string | null
   setHighlightedValue: (value: string | null) => void
   items: MutableRefObject<string[]>
+  itemCallbacks: MutableRefObject<Map<string, () => void>>
   pendingDirection: MutableRefObject<"first" | "last" | null>
+  filterable: boolean
+  query: string
+  setQuery: (query: string) => void
 }
 
 export const DropdownContext = createContext<DropdownContextValue | null>(null)

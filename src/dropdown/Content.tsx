@@ -1,6 +1,7 @@
 import { type HTMLAttributes, type ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import { useDropdown } from "./context"
+import { applyFilter } from "./utils"
 
 interface ContentProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode
@@ -25,8 +26,11 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
     highlightedValue,
     setHighlightedValue,
     items,
+    itemCallbacks,
     onSelect,
     pendingDirection,
+    filterable,
+    query,
   } = useDropdown()
 
   const [pos, setPos] = useState<Position>({
@@ -90,11 +94,11 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
   // Set initial highlight when opened via keyboard (runs after Item effects register items)
   useEffect(() => {
     if (!open || pendingDirection.current === null) return
-    const list = items.current
+    const list = applyFilter(items.current, filterable, query)
     const target = pendingDirection.current === "first" ? list[0] : list[list.length - 1]
     if (target !== undefined) setHighlightedValue(target)
     pendingDirection.current = null
-  }, [open, items, pendingDirection, setHighlightedValue])
+  }, [open, items, pendingDirection, setHighlightedValue, filterable, query])
 
   // Keep latest highlightedValue in ref to avoid re-registering listener on every navigation step
   const highlightedRef = useRef(highlightedValue)
@@ -105,7 +109,7 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
     if (!open) return
     const handler = (e: globalThis.KeyboardEvent) => {
       if (e.isComposing) return
-      const list = items.current
+      const list = applyFilter(items.current, filterable, query)
       const current = highlightedRef.current
       const idx = list.indexOf(current ?? "")
       if (e.key === "Escape") {
@@ -122,12 +126,15 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
         if (prev !== undefined) setHighlightedValue(prev)
       } else if (e.key === "Enter") {
         e.preventDefault()
-        if (current !== null) onSelect(current)
+        if (current !== null) {
+          onSelect(current)
+          itemCallbacks.current.get(current)?.()
+        }
       }
     }
     document.addEventListener("keydown", handler)
     return () => document.removeEventListener("keydown", handler)
-  }, [open, setOpen, triggerRef, items, onSelect, setHighlightedValue])
+  }, [open, setOpen, triggerRef, items, onSelect, setHighlightedValue, filterable, query])
 
   if (!open) return null
 

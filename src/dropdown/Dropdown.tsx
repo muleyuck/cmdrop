@@ -1,9 +1,10 @@
-import { type ReactNode, useCallback, useId, useMemo, useRef, useState } from "react"
+import { type ReactNode, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react"
 import { DropdownContext, type DropdownContextValue } from "./context"
 
 interface DropdownBaseProps {
   open?: boolean
   onOpenChange?: (open: boolean) => void
+  filterable?: boolean
   children: ReactNode
 }
 
@@ -27,7 +28,7 @@ const toSet = (v: string | string[] | undefined): Set<string> => {
 }
 
 export function Dropdown(props: DropdownProps) {
-  const { open: controlledOpen, onOpenChange, children } = props
+  const { open: controlledOpen, onOpenChange, filterable = false, children } = props
 
   const triggerId = useId()
   const contentId = useId()
@@ -38,17 +39,34 @@ export function Dropdown(props: DropdownProps) {
   const open = controlledOpen !== undefined ? controlledOpen : internalOpen
 
   const [highlightedValue, setHighlightedValue] = useState<string | null>(null)
+  const [query, setQuery] = useState("")
   const items = useRef<string[]>([])
+  const itemCallbacks = useRef(new Map<string, () => void>())
   const pendingDirection = useRef<"first" | "last" | null>(null)
 
   const setOpen = useCallback(
     (next: boolean) => {
       if (controlledOpen === undefined) setInternalOpen(next)
       onOpenChange?.(next)
-      if (!next) setHighlightedValue(null)
     },
     [controlledOpen, onOpenChange],
   )
+
+  useEffect(() => {
+    if (!open) {
+      setHighlightedValue(null)
+      setQuery("")
+    }
+  }, [open])
+
+  useLayoutEffect(() => {
+    if (!filterable || !query) {
+      setHighlightedValue(null)
+      return
+    }
+    const first = items.current.find((v) => v.toLowerCase().includes(query.toLowerCase()))
+    setHighlightedValue(first ?? null)
+  }, [query, filterable])
 
   const isControlled = props.value !== undefined
   const [internalValues, setInternalValues] = useState<Set<string>>(new Set())
@@ -95,9 +113,13 @@ export function Dropdown(props: DropdownProps) {
       highlightedValue,
       setHighlightedValue,
       items,
+      itemCallbacks,
       pendingDirection,
+      filterable,
+      query,
+      setQuery,
     }),
-    [open, setOpen, triggerId, contentId, selectedValues, multiple, onSelect, highlightedValue],
+    [open, setOpen, triggerId, contentId, selectedValues, multiple, onSelect, highlightedValue, filterable, query],
   )
 
   return <DropdownContext.Provider value={ctx}>{children}</DropdownContext.Provider>
