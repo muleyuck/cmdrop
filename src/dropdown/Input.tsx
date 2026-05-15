@@ -8,7 +8,7 @@ export function Input({ onChange, value, ...props }: InputProps) {
 
   return (
     <input
-      role="searchbox"
+      type="search"
       value={value ?? query}
       onChange={(e) => {
         setQuery(e.target.value)

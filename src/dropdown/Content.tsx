@@ -41,14 +41,12 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
     ready: false,
   })
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: triggerRef/contentRef are stable refs; .current is intentionally excluded per React ref convention
   const updatePosition = useCallback(() => {
     if (!triggerRef.current || !contentRef.current) return
     const trigger = triggerRef.current.getBoundingClientRect()
     const content = contentRef.current.getBoundingClientRect()
     const spaceBelow = window.innerHeight - trigger.bottom
-    const side: "top" | "bottom" =
-      spaceBelow >= content.height || spaceBelow >= trigger.top ? "bottom" : "top"
+    const side: "top" | "bottom" = spaceBelow >= content.height || spaceBelow >= trigger.top ? "bottom" : "top"
     const top = side === "bottom" ? trigger.bottom : trigger.top - content.height
     setPos({ top, left: trigger.left, width: trigger.width, side, ready: true })
   }, [triggerRef, contentRef])
@@ -70,7 +68,6 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
   }, [open, updatePosition])
 
   // Reposition on viewport resize (documentElement) and content height changes (contentRef)
-  // biome-ignore lint/correctness/useExhaustiveDependencies: contentRef is a stable ref; .current is intentionally excluded per React ref convention
   useEffect(() => {
     if (!open) return
     const observer = new ResizeObserver(updatePosition)
@@ -134,7 +131,7 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
     }
     document.addEventListener("keydown", handler)
     return () => document.removeEventListener("keydown", handler)
-  }, [open, setOpen, triggerRef, items, onSelect, setHighlightedValue, filterable, query])
+  }, [open, setOpen, triggerRef, items, itemCallbacks, onSelect, setHighlightedValue, filterable, query])
 
   if (!open) return null
 
