@@ -6,8 +6,8 @@ import { Dropdown } from "../../src/dropdown/Dropdown"
 import { Empty } from "../../src/dropdown/Empty"
 import { Group } from "../../src/dropdown/Group"
 import { Item } from "../../src/dropdown/Item"
-import { Separator } from "../../src/dropdown/Separator"
 import { Trigger } from "../../src/dropdown/Trigger"
+import { Separator } from "../../src/shared/Separator"
 
 describe("Dropdown.Group", () => {
   it("role=group としてレンダリングされる", async () => {

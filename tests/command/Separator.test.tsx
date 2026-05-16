@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react"
 import { describe, expect, it } from "vitest"
-import { Separator } from "../../src/command/Separator"
+import { Separator } from "../../src/shared/Separator"
 
 describe("Separator", () => {
   it("hr としてレンダリングされる", () => {

@@ -1,4 +1,5 @@
-import { type ReactNode, useCallback } from "react"
+import type { ReactNode } from "react"
+import { useHighlight as useHighlightBase } from "../shared/useHighlight"
 import { useCommand } from "./context"
 
 interface UseHighlightOptions {
@@ -7,20 +8,5 @@ interface UseHighlightOptions {
 
 export function useHighlight({ className }: UseHighlightOptions = {}): (text: string) => ReactNode {
   const { query } = useCommand()
-
-  return useCallback(
-    (text: string): ReactNode => {
-      if (!query) return text
-      const idx = text.toLowerCase().indexOf(query.toLowerCase())
-      if (idx === -1) return text
-      return (
-        <span>
-          {text.slice(0, idx)}
-          <span className={className}>{text.slice(idx, idx + query.length)}</span>
-          {text.slice(idx + query.length)}
-        </span>
-      )
-    },
-    [query, className],
-  )
+  return useHighlightBase({ query, className })
 }
