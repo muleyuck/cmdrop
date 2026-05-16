@@ -4,11 +4,40 @@
   "homepage": "https://github.com/muleyuck/cmdrop",
   "items": [
     {
+      "name": "use-highlight",
+      "type": "registry:ui",
+      "title": "useHighlight",
+      "description": "Shared hook for highlighting matched query text, used by Dropdown and Command.",
+      "dependencies": [],
+      "files": [
+        {
+          "path": "src/shared/useHighlight.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/shared/useHighlight.tsx"
+        }
+      ]
+    },
+    {
+      "name": "separator",
+      "type": "registry:ui",
+      "title": "Separator",
+      "description": "Shared separator component used by Dropdown and Command.",
+      "dependencies": [],
+      "files": [
+        {
+          "path": "src/shared/Separator.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/shared/Separator.tsx"
+        }
+      ]
+    },
+    {
       "name": "dropdown",
       "type": "registry:ui",
       "title": "Dropdown",
       "description": "Unstyled, accessible Dropdown with single/multiple selection, keyboard navigation, and zero dependencies.",
       "dependencies": [],
+      "registryDependencies": ["separator", "use-highlight"],
       "files": [
         {
           "path": "src/dropdown/context.ts",
@@ -41,14 +70,24 @@
           "target": "components/ui/dropdown/Group.tsx"
         },
         {
-          "path": "src/dropdown/Separator.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/dropdown/Separator.tsx"
-        },
-        {
           "path": "src/dropdown/Empty.tsx",
           "type": "registry:ui",
           "target": "components/ui/dropdown/Empty.tsx"
+        },
+        {
+          "path": "src/dropdown/Input.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/dropdown/Input.tsx"
+        },
+        {
+          "path": "src/dropdown/utils.ts",
+          "type": "registry:ui",
+          "target": "components/ui/dropdown/utils.ts"
+        },
+        {
+          "path": "src/dropdown/useHighlight.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/dropdown/useHighlight.tsx"
         },
         {
           "path": "src/dropdown/index.ts",
@@ -63,6 +102,7 @@
       "title": "Command",
       "description": "Unstyled, accessible Command Palette with text filtering, keyboard navigation, and zero dependencies.",
       "dependencies": [],
+      "registryDependencies": ["separator", "use-highlight"],
       "files": [
         {
           "path": "src/command/context.ts",
@@ -98,11 +138,6 @@
           "path": "src/command/Group.tsx",
           "type": "registry:ui",
           "target": "components/ui/command/Group.tsx"
-        },
-        {
-          "path": "src/command/Separator.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/command/Separator.tsx"
         },
         {
           "path": "src/command/Empty.tsx",
