@@ -45,7 +45,7 @@ export function Item({ onSelect, value: valueProp, disabled = false, children, .
       role="option"
       aria-selected={false}
       aria-disabled={disabled || undefined}
-      tabIndex={disabled ? -1 : 0}
+      tabIndex={-1}
       {...(isHighlighted ? { "data-highlighted": "" } : {})}
       onPointerMove={(e) => {
         if (!disabled && value && (e.movementX !== 0 || e.movementY !== 0)) setHighlightedId(id)

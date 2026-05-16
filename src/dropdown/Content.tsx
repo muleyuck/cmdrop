@@ -31,6 +31,7 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
     pendingDirection,
     filterable,
     query,
+    multiple,
   } = useDropdown()
 
   const [pos, setPos] = useState<Position>({
@@ -142,6 +143,7 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
       id={contentId}
       role="listbox"
       aria-labelledby={triggerId}
+      aria-multiselectable={multiple || undefined}
       aria-activedescendant={highlightedId ?? undefined}
       tabIndex={-1}
       data-state="open"

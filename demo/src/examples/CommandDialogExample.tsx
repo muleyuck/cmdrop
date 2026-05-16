@@ -126,7 +126,7 @@ export default function CommandDialogExample() {
       </button>
       <Command open={open} onOpenChange={setOpen}>
         <Overlay className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm dark:bg-black/60" />
-        <Dialog className="fixed left-1/2 top-[15vh] z-50 w-full max-w-lg -translate-x-1/2 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-2xl dark:border-zinc-700/60 dark:bg-zinc-900">
+        <Dialog aria-label="Command palette" className="fixed left-1/2 top-[15vh] z-50 w-full max-w-lg -translate-x-1/2 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-2xl dark:border-zinc-700/60 dark:bg-zinc-900">
           <CommandContent onClose={() => setOpen(false)} />
         </Dialog>
       </Command>
