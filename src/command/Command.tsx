@@ -1,4 +1,4 @@
-import { type ReactNode, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
+import { type ReactNode, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react"
 import { CommandContext, type CommandContextValue } from "./context"
 
 interface CommandProps {
@@ -40,6 +40,7 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
   const highlightedRef = useRef(highlightedId)
   highlightedRef.current = highlightedId
 
+  const listId = useId()
   const itemsRef = useRef<RegisteredItem[]>([])
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -123,8 +124,9 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
       setItemActive,
       itemCount,
       inputRef,
+      listId,
     }),
-    [open, setOpen, query, highlightedId, registerItem, unregisterItem, setItemActive, itemCount],
+    [open, setOpen, query, highlightedId, registerItem, unregisterItem, setItemActive, itemCount, listId],
   )
 
   return <CommandContext.Provider value={ctx}>{children}</CommandContext.Provider>

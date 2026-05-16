@@ -13,6 +13,7 @@ export interface CommandContextValue {
   setItemActive: (value: string, active: boolean) => void
   itemCount: number
   inputRef: RefObject<HTMLInputElement | null>
+  listId: string
 }
 
 export const CommandContext = createContext<CommandContextValue | null>(null)

@@ -6,9 +6,9 @@ interface ListProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 export function List({ children, ...rest }: ListProps) {
-  const { highlightedId } = useCommand()
+  const { listId } = useCommand()
   return (
-    <div role="listbox" aria-activedescendant={highlightedId ?? undefined} tabIndex={-1} {...rest}>
+    <div id={listId} role="listbox" tabIndex={-1} {...rest}>
       {children}
     </div>
   )
