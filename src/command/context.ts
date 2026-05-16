@@ -6,9 +6,9 @@ export interface CommandContextValue {
   setOpen: (open: boolean) => void
   query: string
   setQuery: (query: string) => void
-  highlightedValue: string | null
-  setHighlightedValue: (value: string | null) => void
-  registerItem: (value: string, onSelect: () => void) => void
+  highlightedId: string | null
+  setHighlightedId: (value: string | null) => void
+  registerItem: (value: string, id: string, onSelect: () => void) => void
   unregisterItem: (value: string) => void
   setItemActive: (value: string, active: boolean) => void
   itemCount: number

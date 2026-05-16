@@ -38,9 +38,9 @@ export function Dropdown(props: DropdownProps) {
   const [internalOpen, setInternalOpen] = useState(false)
   const open = controlledOpen !== undefined ? controlledOpen : internalOpen
 
-  const [highlightedValue, setHighlightedValue] = useState<string | null>(null)
+  const [highlightedId, setHighlightedId] = useState<string | null>(null)
   const [query, setQuery] = useState("")
-  const items = useRef<string[]>([])
+  const items = useRef<{ value: string; id: string }[]>([])
   const itemCallbacks = useRef(new Map<string, () => void>())
   const pendingDirection = useRef<"first" | "last" | null>(null)
 
@@ -54,18 +54,18 @@ export function Dropdown(props: DropdownProps) {
 
   useEffect(() => {
     if (!open) {
-      setHighlightedValue(null)
+      setHighlightedId(null)
       setQuery("")
     }
   }, [open])
 
   useLayoutEffect(() => {
     if (!filterable || !query) {
-      setHighlightedValue(null)
+      setHighlightedId(null)
       return
     }
-    const first = items.current.find((v) => v.toLowerCase().includes(query.toLowerCase()))
-    setHighlightedValue(first ?? null)
+    const first = items.current.find((item) => item.value.toLowerCase().includes(query.toLowerCase()))
+    setHighlightedId(first?.id ?? null)
   }, [query, filterable])
 
   const isControlled = props.value !== undefined
@@ -110,8 +110,8 @@ export function Dropdown(props: DropdownProps) {
       selectedValues,
       multiple,
       onSelect,
-      highlightedValue,
-      setHighlightedValue,
+      highlightedId,
+      setHighlightedId,
       items,
       itemCallbacks,
       pendingDirection,
@@ -119,7 +119,7 @@ export function Dropdown(props: DropdownProps) {
       query,
       setQuery,
     }),
-    [open, setOpen, triggerId, contentId, selectedValues, multiple, onSelect, highlightedValue, filterable, query],
+    [open, setOpen, triggerId, contentId, selectedValues, multiple, onSelect, highlightedId, filterable, query],
   )
 
   return <DropdownContext.Provider value={ctx}>{children}</DropdownContext.Provider>

@@ -23,8 +23,8 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
     contentId,
     triggerRef,
     contentRef,
-    highlightedValue,
-    setHighlightedValue,
+    highlightedId,
+    setHighlightedId,
     items,
     itemCallbacks,
     onSelect,
@@ -93,13 +93,13 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
     if (!open || pendingDirection.current === null) return
     const list = applyFilter(items.current, filterable, query)
     const target = pendingDirection.current === "first" ? list[0] : list[list.length - 1]
-    if (target !== undefined) setHighlightedValue(target)
+    if (target !== undefined) setHighlightedId(target.id)
     pendingDirection.current = null
-  }, [open, items, pendingDirection, setHighlightedValue, filterable, query])
+  }, [open, items, pendingDirection, setHighlightedId, filterable, query])
 
-  // Keep latest highlightedValue in ref to avoid re-registering listener on every navigation step
-  const highlightedRef = useRef(highlightedValue)
-  highlightedRef.current = highlightedValue
+  // Keep latest highlightedId in ref to avoid re-registering listener on every navigation step
+  const highlightedRef = useRef(highlightedId)
+  highlightedRef.current = highlightedId
 
   // Keyboard navigation — registered only while open, removed on close/unmount
   useEffect(() => {
@@ -108,7 +108,7 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
       if (e.isComposing) return
       const list = applyFilter(items.current, filterable, query)
       const current = highlightedRef.current
-      const idx = list.indexOf(current ?? "")
+      const idx = list.findIndex((item) => item.id === (current ?? ""))
       if (e.key === "Escape") {
         e.preventDefault()
         setOpen(false)
@@ -116,22 +116,23 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
       } else if (e.key === "ArrowDown") {
         e.preventDefault()
         const next = idx < list.length - 1 ? list[idx + 1] : list[0]
-        if (next !== undefined) setHighlightedValue(next)
+        if (next !== undefined) setHighlightedId(next.id)
       } else if (e.key === "ArrowUp") {
         e.preventDefault()
         const prev = idx > 0 ? list[idx - 1] : list[list.length - 1]
-        if (prev !== undefined) setHighlightedValue(prev)
+        if (prev !== undefined) setHighlightedId(prev.id)
       } else if (e.key === "Enter") {
         e.preventDefault()
-        if (current !== null) {
-          onSelect(current)
-          itemCallbacks.current.get(current)?.()
+        const item = list.find((i) => i.id === current)
+        if (item) {
+          onSelect(item.value)
+          itemCallbacks.current.get(item.value)?.()
         }
       }
     }
     document.addEventListener("keydown", handler)
     return () => document.removeEventListener("keydown", handler)
-  }, [open, setOpen, triggerRef, items, itemCallbacks, onSelect, setHighlightedValue, filterable, query])
+  }, [open, setOpen, triggerRef, items, itemCallbacks, onSelect, setHighlightedId, filterable, query])
 
   if (!open) return null
 
@@ -141,6 +142,7 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
       id={contentId}
       role="listbox"
       aria-labelledby={triggerId}
+      aria-activedescendant={highlightedId ?? undefined}
       tabIndex={-1}
       data-state="open"
       data-side={pos.side}

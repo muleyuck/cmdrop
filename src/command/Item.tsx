@@ -1,5 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react"
-import { useLayoutEffect, useRef } from "react"
+import { useId, useLayoutEffect, useRef } from "react"
 import { useCommand } from "./context"
 import { useGroupContext } from "./Group"
 
@@ -11,11 +11,12 @@ interface ItemProps extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
 }
 
 export function Item({ onSelect, value: valueProp, disabled = false, children, ...rest }: ItemProps) {
-  const { query, highlightedValue, setHighlightedValue, registerItem, unregisterItem, setItemActive } = useCommand()
+  const { query, highlightedId, setHighlightedId, registerItem, unregisterItem, setItemActive } = useCommand()
   const groupCtx = useGroupContext()
+  const id = useId()
 
   const value = valueProp ?? (typeof children === "string" ? children : "")
-  const isHighlighted = value !== "" && highlightedValue === value
+  const isHighlighted = highlightedId === id
   const isVisible = !query || value === "" || value.toLowerCase().includes(query.toLowerCase())
 
   const onSelectRef = useRef(onSelect)
@@ -24,9 +25,9 @@ export function Item({ onSelect, value: valueProp, disabled = false, children, .
   // Lifecycle: register on mount, unregister on unmount
   useLayoutEffect(() => {
     if (!value || disabled) return
-    registerItem(value, () => onSelectRef.current())
+    registerItem(value, id, () => onSelectRef.current())
     return () => unregisterItem(value)
-  }, [value, disabled, registerItem, unregisterItem])
+  }, [value, disabled, id, registerItem, unregisterItem])
 
   // Visibility: toggle active and notify Group
   useLayoutEffect(() => {
@@ -40,12 +41,14 @@ export function Item({ onSelect, value: valueProp, disabled = false, children, .
 
   return (
     <div
+      id={id}
       role="option"
+      aria-selected={false}
       aria-disabled={disabled || undefined}
       tabIndex={disabled ? -1 : 0}
       {...(isHighlighted ? { "data-highlighted": "" } : {})}
       onPointerMove={(e) => {
-        if (!disabled && value && (e.movementX !== 0 || e.movementY !== 0)) setHighlightedValue(value)
+        if (!disabled && value && (e.movementX !== 0 || e.movementY !== 0)) setHighlightedId(id)
       }}
       onClick={() => {
         if (!disabled) onSelect()

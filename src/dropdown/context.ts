@@ -1,5 +1,10 @@
 import { createContext, type MutableRefObject, type RefObject, useContext } from "react"
 
+export interface DropdownItem {
+  value: string
+  id: string
+}
+
 export interface DropdownContextValue {
   open: boolean
   setOpen: (open: boolean) => void
@@ -10,9 +15,9 @@ export interface DropdownContextValue {
   selectedValues: Set<string>
   multiple: boolean
   onSelect: (value: string) => void
-  highlightedValue: string | null
-  setHighlightedValue: (value: string | null) => void
-  items: MutableRefObject<string[]>
+  highlightedId: string | null
+  setHighlightedId: (value: string | null) => void
+  items: MutableRefObject<DropdownItem[]>
   itemCallbacks: MutableRefObject<Map<string, () => void>>
   pendingDirection: MutableRefObject<"first" | "last" | null>
   filterable: boolean

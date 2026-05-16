@@ -9,6 +9,7 @@ interface CommandProps {
 
 interface RegisteredItem {
   value: string
+  id: string
   onSelect: () => void
   active: boolean
 }
@@ -17,7 +18,7 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
   const [internalOpen, setInternalOpen] = useState(false)
   const open = controlledOpen !== undefined ? controlledOpen : internalOpen
 
-  const [highlightedValue, setHighlightedValue] = useState<string | null>(null)
+  const [highlightedId, setHighlightedId] = useState<string | null>(null)
   const [query, setQuery] = useState("")
   const [itemCount, setItemCount] = useState(0)
 
@@ -31,20 +32,20 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
 
   useEffect(() => {
     if (!open) {
-      setHighlightedValue(null)
+      setHighlightedId(null)
       setQuery("")
     }
   }, [open])
 
-  const highlightedRef = useRef(highlightedValue)
-  highlightedRef.current = highlightedValue
+  const highlightedRef = useRef(highlightedId)
+  highlightedRef.current = highlightedId
 
   const itemsRef = useRef<RegisteredItem[]>([])
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const registerItem = useCallback((value: string, onSelect: () => void) => {
+  const registerItem = useCallback((value: string, id: string, onSelect: () => void) => {
     if (itemsRef.current.some((i) => i.value === value)) return
-    itemsRef.current.push({ value, onSelect, active: false })
+    itemsRef.current.push({ value, id, onSelect, active: false })
   }, [])
 
   const unregisterItem = useCallback((value: string) => {
@@ -52,7 +53,7 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
     if (!item) return
     if (item.active) {
       setItemCount((c) => c - 1)
-      if (highlightedRef.current === value) setHighlightedValue(null)
+      if (highlightedRef.current === item.id) setHighlightedId(null)
     }
     itemsRef.current = itemsRef.current.filter((i) => i.value !== value)
   }, [])
@@ -62,15 +63,15 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
     if (!item || item.active === active) return
     item.active = active
     setItemCount((c) => c + (active ? 1 : -1))
-    if (!active && highlightedRef.current === value) setHighlightedValue(null)
+    if (!active && highlightedRef.current === item.id) setHighlightedId(null)
   }, [])
 
   useLayoutEffect(() => {
     if (!query) {
-      setHighlightedValue(null)
+      setHighlightedId(null)
       return
     }
-    setHighlightedValue(itemsRef.current.find((i) => i.active)?.value ?? null)
+    setHighlightedId(itemsRef.current.find((i) => i.active)?.id ?? null)
   }, [query])
 
   useEffect(() => {
@@ -84,7 +85,7 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
       if (!open) return
       const list = itemsRef.current.filter((i) => i.active)
       const current = highlightedRef.current
-      const idx = list.findIndex((i) => i.value === (current ?? ""))
+      const idx = list.findIndex((i) => i.id === (current ?? ""))
 
       if (e.key === "Escape") {
         e.preventDefault()
@@ -92,13 +93,13 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
       } else if (e.key === "ArrowDown") {
         e.preventDefault()
         const next = idx < list.length - 1 ? list[idx + 1] : list[0]
-        if (next !== undefined) setHighlightedValue(next.value)
+        if (next !== undefined) setHighlightedId(next.id)
       } else if (e.key === "ArrowUp") {
         e.preventDefault()
         const prev = idx > 0 ? list[idx - 1] : list[list.length - 1]
-        if (prev !== undefined) setHighlightedValue(prev.value)
+        if (prev !== undefined) setHighlightedId(prev.id)
       } else if (e.key === "Enter") {
-        const item = list.find((i) => i.value === (current ?? ""))
+        const item = list.find((i) => i.id === (current ?? ""))
         if (item) {
           e.preventDefault()
           item.onSelect()
@@ -115,15 +116,15 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
       setOpen,
       query,
       setQuery,
-      highlightedValue,
-      setHighlightedValue,
+      highlightedId,
+      setHighlightedId,
       registerItem,
       unregisterItem,
       setItemActive,
       itemCount,
       inputRef,
     }),
-    [open, setOpen, query, highlightedValue, registerItem, unregisterItem, setItemActive, itemCount],
+    [open, setOpen, query, highlightedId, registerItem, unregisterItem, setItemActive, itemCount],
   )
 
   return <CommandContext.Provider value={ctx}>{children}</CommandContext.Provider>

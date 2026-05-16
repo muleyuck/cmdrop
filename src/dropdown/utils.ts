@@ -1,5 +1,5 @@
-export function applyFilter(items: string[], filterable: boolean, query: string): string[] {
+export function applyFilter<T extends { value: string }>(items: T[], filterable: boolean, query: string): T[] {
   if (!filterable || !query) return items
   const q = query.toLowerCase()
-  return items.filter((v) => v.toLowerCase().includes(q))
+  return items.filter((item) => item.value.toLowerCase().includes(q))
 }
