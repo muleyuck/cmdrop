@@ -3,6 +3,8 @@ import { Content, Dropdown, Item, Separator, Trigger } from "../../src/dropdown"
 import { DemoCard } from "./DemoCard"
 import CommandDialogExample from "./examples/CommandDialogExample"
 import commandDialogSource from "./examples/CommandDialogExample.tsx?raw"
+import DropdownFilterableExample from "./examples/DropdownFilterableExample"
+import dropdownFilterableSource from "./examples/DropdownFilterableExample.tsx?raw"
 import DropdownGroupsExample from "./examples/DropdownGroupsExample"
 import dropdownGroupsSource from "./examples/DropdownGroupsExample.tsx?raw"
 import DropdownMultipleExample from "./examples/DropdownMultipleExample"
@@ -135,6 +137,7 @@ export function App() {
                   { name: "Single", preview: <DropdownSingleExample />, code: dropdownSingleSource },
                   { name: "Multiple", preview: <DropdownMultipleExample />, code: dropdownMultipleSource },
                   { name: "Groups", preview: <DropdownGroupsExample />, code: dropdownGroupsSource },
+                  { name: "Filterable", preview: <DropdownFilterableExample />, code: dropdownFilterableSource },
                 ]}
               />
             </section>
