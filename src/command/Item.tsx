@@ -11,7 +11,7 @@ interface ItemProps extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
 }
 
 export function Item({ onSelect, value: valueProp, disabled = false, children, ...rest }: ItemProps) {
-  const { query, highlightedValue, registerItem, unregisterItem, setItemActive } = useCommand()
+  const { query, highlightedValue, setHighlightedValue, registerItem, unregisterItem, setItemActive } = useCommand()
   const groupCtx = useGroupContext()
 
   const value = valueProp ?? (typeof children === "string" ? children : "")
@@ -44,6 +44,9 @@ export function Item({ onSelect, value: valueProp, disabled = false, children, .
       aria-disabled={disabled || undefined}
       tabIndex={disabled ? -1 : 0}
       {...(isHighlighted ? { "data-highlighted": "" } : {})}
+      onPointerMove={(e) => {
+        if (!disabled && value && (e.movementX !== 0 || e.movementY !== 0)) setHighlightedValue(value)
+      }}
       onClick={() => {
         if (!disabled) onSelect()
       }}

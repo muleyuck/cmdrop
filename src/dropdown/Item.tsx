@@ -9,7 +9,8 @@ interface ItemProps extends Omit<HTMLAttributes<HTMLDivElement>, "onClick" | "on
 }
 
 export function Item({ value, disabled = false, onSelect: onSelectProp, children, ...rest }: ItemProps) {
-  const { selectedValues, onSelect, highlightedValue, items, itemCallbacks, filterable, query } = useDropdown()
+  const { selectedValues, onSelect, highlightedValue, setHighlightedValue, items, itemCallbacks, filterable, query } =
+    useDropdown()
 
   const isVisible = !filterable || !query || value.toLowerCase().includes(query.toLowerCase())
   const isSelected = selectedValues.has(value)
@@ -56,6 +57,9 @@ export function Item({ value, disabled = false, onSelect: onSelectProp, children
       {...(isSelected ? { "data-selected": "" } : {})}
       {...(disabled ? { "data-disabled": "" } : {})}
       {...(isHighlighted ? { "data-highlighted": "" } : {})}
+      onPointerMove={(e) => {
+        if (!disabled && (e.movementX !== 0 || e.movementY !== 0)) setHighlightedValue(value)
+      }}
       onClick={handleSelect}
       onKeyDown={handleKeyDown}
     >
