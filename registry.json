@@ -4,20 +4,6 @@
   "homepage": "https://github.com/muleyuck/cmdrop",
   "items": [
     {
-      "name": "use-highlight",
-      "type": "registry:ui",
-      "title": "useHighlight",
-      "description": "Shared hook for highlighting matched query text, used by Dropdown and Command.",
-      "dependencies": [],
-      "files": [
-        {
-          "path": "src/shared/useHighlight.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/shared/useHighlight.tsx"
-        }
-      ]
-    },
-    {
       "name": "separator",
       "type": "registry:ui",
       "title": "Separator",
@@ -37,7 +23,7 @@
       "title": "Dropdown",
       "description": "Unstyled, accessible Dropdown with single/multiple selection, keyboard navigation, and zero dependencies.",
       "dependencies": [],
-      "registryDependencies": ["separator", "use-highlight"],
+      "registryDependencies": ["separator"],
       "files": [
         {
           "path": "src/dropdown/context.ts",
@@ -102,7 +88,7 @@
       "title": "Command",
       "description": "Unstyled, accessible Command Palette with text filtering, keyboard navigation, and zero dependencies.",
       "dependencies": [],
-      "registryDependencies": ["separator", "use-highlight"],
+      "registryDependencies": ["separator"],
       "files": [
         {
           "path": "src/command/context.ts",
