@@ -1,5 +1,6 @@
 import { type ReactNode, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react"
-import { DropdownContext, type DropdownContextValue } from "./context"
+import { DropdownContext, type DropdownContextValue, type PendingDirection } from "./context"
+import { matchesQuery } from "./utils"
 
 interface DropdownBaseProps {
   open?: boolean
@@ -27,7 +28,7 @@ const toSet = (v: string | string[] | undefined): Set<string> => {
   return new Set(Array.isArray(v) ? v : [v])
 }
 
-export function Dropdown(props: DropdownProps) {
+export const Dropdown = (props: DropdownProps) => {
   const { open: controlledOpen, onOpenChange, filterable = false, children } = props
 
   const triggerId = useId()
@@ -42,11 +43,13 @@ export function Dropdown(props: DropdownProps) {
   const [query, setQuery] = useState("")
   const items = useRef<{ value: string; id: string }[]>([])
   const itemCallbacks = useRef(new Map<string, () => void>())
-  const pendingDirection = useRef<"first" | "last" | null>(null)
+  const pendingDirection = useRef<PendingDirection>(null)
 
   const setOpen = useCallback(
     (next: boolean) => {
-      if (controlledOpen === undefined) setInternalOpen(next)
+      if (controlledOpen === undefined) {
+        setInternalOpen(next)
+      }
       onOpenChange?.(next)
     },
     [controlledOpen, onOpenChange],
@@ -64,7 +67,7 @@ export function Dropdown(props: DropdownProps) {
       setHighlightedId(null)
       return
     }
-    const first = items.current.find((item) => item.value.toLowerCase().includes(query.toLowerCase()))
+    const first = items.current.find((item) => matchesQuery(item.value, query))
     setHighlightedId(first?.id ?? null)
   }, [query, filterable])
 
@@ -86,12 +89,19 @@ export function Dropdown(props: DropdownProps) {
       const controlled = p.value !== undefined
       if (p.multiple) {
         const next = new Set(current)
-        if (next.has(value)) next.delete(value)
-        else next.add(value)
-        if (!controlled) setInternalValues(next)
+        if (next.has(value)) {
+          next.delete(value)
+        } else {
+          next.add(value)
+        }
+        if (!controlled) {
+          setInternalValues(next)
+        }
         p.onValueChange?.([...next])
       } else {
-        if (!controlled) setInternalValues(new Set([value]))
+        if (!controlled) {
+          setInternalValues(new Set([value]))
+        }
         p.onValueChange?.(value)
         setOpen(false)
       }

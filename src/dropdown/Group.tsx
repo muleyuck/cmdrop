@@ -6,7 +6,7 @@ interface GroupProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode
 }
 
-export function Group({ label, labelClassName, children, ...rest }: GroupProps) {
+export const Group = ({ label, labelClassName, children, ...rest }: GroupProps) => {
   const labelId = useId()
 
   return (

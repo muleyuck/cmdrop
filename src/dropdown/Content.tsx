@@ -1,7 +1,7 @@
 import { type HTMLAttributes, type ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import { useDropdown } from "./context"
-import { applyFilter } from "./utils"
+import { matchesQuery } from "./utils"
 
 interface ContentProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode
@@ -15,7 +15,7 @@ interface Position {
   ready: boolean
 }
 
-export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
+export const Content = ({ children, style, onKeyDown, ...rest }: ContentProps) => {
   const {
     open,
     setOpen,
@@ -63,17 +63,21 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
 
   // Reposition on scroll (capture mode covers all ancestor scrolls)
   useEffect(() => {
-    if (!open) return
+    if (!open) {
+      return
+    }
     document.addEventListener("scroll", updatePosition, { capture: true, passive: true })
     return () => document.removeEventListener("scroll", updatePosition, true)
   }, [open, updatePosition])
 
   // Reposition on viewport resize (documentElement) and content height changes (contentRef)
   useEffect(() => {
-    if (!open) return
+    if (!open || !contentRef.current) {
+      return
+    }
     const observer = new ResizeObserver(updatePosition)
     observer.observe(document.documentElement)
-    if (contentRef.current) observer.observe(contentRef.current)
+    observer.observe(contentRef.current)
     return () => observer.disconnect()
   }, [open, updatePosition, contentRef])
 
@@ -92,7 +96,7 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
   // Set initial highlight when opened via keyboard (runs after Item effects register items)
   useEffect(() => {
     if (!open || pendingDirection.current === null) return
-    const list = applyFilter(items.current, filterable, query)
+    const list = filterable && query ? items.current.filter((item) => matchesQuery(item.value, query)) : items.current
     const target = pendingDirection.current === "first" ? list[0] : list[list.length - 1]
     if (target !== undefined) setHighlightedId(target.id)
     pendingDirection.current = null
@@ -106,8 +110,10 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
   useEffect(() => {
     if (!open) return
     const handler = (e: globalThis.KeyboardEvent) => {
-      if (e.isComposing) return
-      const list = applyFilter(items.current, filterable, query)
+      if (e.isComposing) {
+        return
+      }
+      const list = filterable && query ? items.current.filter((item) => matchesQuery(item.value, query)) : items.current
       const current = highlightedRef.current
       const idx = list.findIndex((item) => item.id === (current ?? ""))
       if (e.key === "Escape") {
@@ -117,17 +123,21 @@ export function Content({ children, style, onKeyDown, ...rest }: ContentProps) {
       } else if (e.key === "ArrowDown") {
         e.preventDefault()
         const next = idx < list.length - 1 ? list[idx + 1] : list[0]
-        if (next !== undefined) setHighlightedId(next.id)
+        if (next !== undefined) {
+          setHighlightedId(next.id)
+        }
       } else if (e.key === "ArrowUp") {
         e.preventDefault()
         const prev = idx > 0 ? list[idx - 1] : list[list.length - 1]
-        if (prev !== undefined) setHighlightedId(prev.id)
+        if (prev !== undefined) {
+          setHighlightedId(prev.id)
+        }
       } else if (e.key === "Enter") {
         e.preventDefault()
         const item = list.find((i) => i.id === current)
         if (item) {
           onSelect(item.value)
-          itemCallbacks.current.get(item.value)?.()
+          itemCallbacks.current.get(item.id)?.()
         }
       }
     }

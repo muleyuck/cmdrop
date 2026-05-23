@@ -1,5 +1,6 @@
 import { type HTMLAttributes, type KeyboardEvent, type ReactNode, useEffect, useId, useRef } from "react"
 import { useDropdown } from "./context"
+import { matchesQuery } from "./utils"
 
 interface ItemProps extends Omit<HTMLAttributes<HTMLDivElement>, "onClick" | "onKeyDown"> {
   value: string
@@ -8,35 +9,41 @@ interface ItemProps extends Omit<HTMLAttributes<HTMLDivElement>, "onClick" | "on
   children: ReactNode
 }
 
-export function Item({ value, disabled = false, onSelect: onSelectProp, children, ...rest }: ItemProps) {
+export const Item = ({ value, disabled = false, onSelect: onSelectProp, children, ...rest }: ItemProps) => {
   const { selectedValues, onSelect, highlightedId, setHighlightedId, items, itemCallbacks, filterable, query } =
     useDropdown()
   const id = useId()
-
-  const isVisible = !filterable || !query || value.toLowerCase().includes(query.toLowerCase())
-  const isSelected = selectedValues.has(value)
-  const isHighlighted = highlightedId === id
 
   const onSelectRef = useRef(onSelectProp)
   onSelectRef.current = onSelectProp
 
   // Register this item for keyboard navigation; remove on unmount or when disabled changes
   useEffect(() => {
-    if (disabled) return
-    if (!items.current.some((item) => item.value === value)) {
+    if (disabled) {
+      return
+    }
+    if (!items.current.some((item) => item.id === id)) {
       items.current.push({ value, id })
     }
-    itemCallbacks.current.set(value, () => onSelectRef.current?.())
+    itemCallbacks.current.set(id, () => onSelectRef.current?.())
     return () => {
-      items.current = items.current.filter((item) => item.value !== value)
-      itemCallbacks.current.delete(value)
+      items.current = items.current.filter((item) => item.id !== id)
+      itemCallbacks.current.delete(id)
     }
   }, [value, disabled, id, items, itemCallbacks])
 
-  if (!isVisible) return null
+  const hidden = filterable && !!query && !matchesQuery(value, query)
+  if (hidden) {
+    return null
+  }
+
+  const isSelected = selectedValues.has(value)
+  const isHighlighted = highlightedId === id
 
   const handleSelect = () => {
-    if (disabled) return
+    if (disabled) {
+      return
+    }
     onSelect(value)
     onSelectProp?.()
   }
@@ -60,7 +67,14 @@ export function Item({ value, disabled = false, onSelect: onSelectProp, children
       {...(disabled ? { "data-disabled": "" } : {})}
       {...(isHighlighted ? { "data-highlighted": "" } : {})}
       onPointerMove={(e) => {
-        if (!disabled && (e.movementX !== 0 || e.movementY !== 0)) setHighlightedId(id)
+        if (disabled) {
+          return
+        }
+        if (e.movementX === 0 && e.movementY === 0) {
+          return
+        }
+        // Only pointer moved
+        setHighlightedId(id)
       }}
       onClick={handleSelect}
       onKeyDown={handleKeyDown}

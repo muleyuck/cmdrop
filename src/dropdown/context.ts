@@ -1,4 +1,6 @@
-import { createContext, type MutableRefObject, type RefObject, useContext } from "react"
+import { createContext, type RefObject, useContext } from "react"
+
+export type PendingDirection = "first" | "last" | null
 
 export interface DropdownItem {
   value: string
@@ -17,9 +19,9 @@ export interface DropdownContextValue {
   onSelect: (value: string) => void
   highlightedId: string | null
   setHighlightedId: (value: string | null) => void
-  items: MutableRefObject<DropdownItem[]>
-  itemCallbacks: MutableRefObject<Map<string, () => void>>
-  pendingDirection: MutableRefObject<"first" | "last" | null>
+  items: RefObject<DropdownItem[]>
+  itemCallbacks: RefObject<Map<string, () => void>>
+  pendingDirection: RefObject<PendingDirection>
   filterable: boolean
   query: string
   setQuery: (query: string) => void
@@ -27,7 +29,7 @@ export interface DropdownContextValue {
 
 export const DropdownContext = createContext<DropdownContextValue | null>(null)
 
-export function useDropdown(): DropdownContextValue {
+export const useDropdown = (): DropdownContextValue => {
   const ctx = useContext(DropdownContext)
   if (ctx === null) {
     throw new Error("useDropdown must be used within a Dropdown component")

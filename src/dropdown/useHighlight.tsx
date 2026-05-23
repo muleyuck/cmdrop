@@ -5,13 +5,17 @@ interface UseHighlightOptions {
   className?: string | undefined
 }
 
-export function useHighlight({ className }: UseHighlightOptions = {}): (text: string) => ReactNode {
+export const useHighlight = ({ className }: UseHighlightOptions = {}): ((text: string) => ReactNode) => {
   const { query } = useDropdown()
   return useCallback(
     (text: string): ReactNode => {
-      if (!query) return text
+      if (!query) {
+        return text
+      }
       const idx = text.toLowerCase().indexOf(query.toLowerCase())
-      if (idx === -1) return text
+      if (idx === -1) {
+        return text
+      }
       return (
         <span>
           {text.slice(0, idx)}

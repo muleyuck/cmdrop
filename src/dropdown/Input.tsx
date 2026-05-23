@@ -3,7 +3,7 @@ import { useDropdown } from "./context"
 
 type InputProps = InputHTMLAttributes<HTMLInputElement>
 
-export function Input({ onChange, value, ...props }: InputProps) {
+export const Input = ({ onChange, value, ...props }: InputProps) => {
   const { query, setQuery, contentId, highlightedId } = useDropdown()
 
   return (

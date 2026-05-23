@@ -5,7 +5,7 @@ interface TriggerProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode
 }
 
-export function Trigger({ children, onClick, onKeyDown, ...rest }: TriggerProps) {
+export const Trigger = ({ children, onClick, onKeyDown, ...rest }: TriggerProps) => {
   const { open, setOpen, triggerId, contentId, triggerRef, pendingDirection } = useDropdown()
 
   const handleKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
@@ -15,10 +15,12 @@ export function Trigger({ children, onClick, onKeyDown, ...rest }: TriggerProps)
     }
     if (e.key === "ArrowDown") {
       e.preventDefault()
+      e.stopPropagation()
       pendingDirection.current = "first"
       setOpen(true)
     } else if (e.key === "ArrowUp") {
       e.preventDefault()
+      e.stopPropagation()
       pendingDirection.current = "last"
       setOpen(true)
     }

@@ -1,15 +1,15 @@
 import type { HTMLAttributes, ReactNode } from "react"
 import { useDropdown } from "./context"
-import { applyFilter } from "./utils"
+import { matchesQuery } from "./utils"
 
 interface EmptyProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode
 }
 
-export function Empty({ children, ...rest }: EmptyProps) {
+export const Empty = ({ children, ...rest }: EmptyProps) => {
   const { items, filterable, query } = useDropdown()
 
-  if ((filterable && !query) || applyFilter(items.current, filterable, query).length > 0) return null
+  if (!filterable || !query || items.current.some((item) => matchesQuery(item.value, query))) return null
 
   return (
     <div {...rest} aria-live="polite">
