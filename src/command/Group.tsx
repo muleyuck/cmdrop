@@ -7,7 +7,7 @@ interface GroupContextValue {
 
 const GroupContext = createContext<GroupContextValue | null>(null)
 
-export function useGroupContext(): GroupContextValue | null {
+export const useGroupContext = (): GroupContextValue | null => {
   return useContext(GroupContext)
 }
 
@@ -18,14 +18,16 @@ interface GroupProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode
 }
 
-export function Group({ label, labelClassName, forceMount = false, children, ...rest }: GroupProps) {
+export const Group = ({ label, labelClassName, forceMount = false, children, ...rest }: GroupProps) => {
   const labelId = useId()
   const visibleItemsRef = useRef(new Set<string>())
   const [isHidden, setIsHidden] = useState(false)
 
   const notifyVisible = useCallback(
     (value: string, visible: boolean) => {
-      if (forceMount) return
+      if (forceMount) {
+        return
+      }
       const wasEmpty = visibleItemsRef.current.size === 0
       if (visible) {
         visibleItemsRef.current.add(value)

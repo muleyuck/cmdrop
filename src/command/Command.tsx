@@ -1,17 +1,11 @@
 import { type ReactNode, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react"
 import { CommandContext, type CommandContextValue } from "./context"
+import { matchesQuery } from "./utils"
 
 interface CommandProps {
   open?: boolean
   onOpenChange?: (open: boolean) => void
   children: ReactNode
-}
-
-interface RegisteredItem {
-  value: string
-  id: string
-  onSelect: () => void
-  active: boolean
 }
 
 export function Command({ open: controlledOpen, onOpenChange, children }: CommandProps) {
@@ -20,7 +14,7 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
 
   const [highlightedId, setHighlightedId] = useState<string | null>(null)
   const [query, setQuery] = useState("")
-  const [itemCount, setItemCount] = useState(0)
+  const [registeredCount, setRegisteredCount] = useState(0)
 
   const setOpen = useCallback(
     (next: boolean) => {
@@ -40,31 +34,25 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
   const highlightedRef = useRef(highlightedId)
   highlightedRef.current = highlightedId
 
+  const queryRef = useRef(query)
+  queryRef.current = query
+
   const listId = useId()
-  const itemsRef = useRef<RegisteredItem[]>([])
+  const itemsRef = useRef<{ value: string; id: string; onSelect: () => void }[]>([])
   const inputRef = useRef<HTMLInputElement>(null)
 
   const registerItem = useCallback((value: string, id: string, onSelect: () => void) => {
-    if (itemsRef.current.some((i) => i.value === value)) return
-    itemsRef.current.push({ value, id, onSelect, active: false })
+    if (itemsRef.current.some((i) => i.id === id)) return
+    itemsRef.current.push({ value, id, onSelect })
+    setRegisteredCount((c) => c + 1)
   }, [])
 
-  const unregisterItem = useCallback((value: string) => {
-    const item = itemsRef.current.find((i) => i.value === value)
+  const unregisterItem = useCallback((id: string) => {
+    const item = itemsRef.current.find((i) => i.id === id)
     if (!item) return
-    if (item.active) {
-      setItemCount((c) => c - 1)
-      if (highlightedRef.current === item.id) setHighlightedId(null)
-    }
-    itemsRef.current = itemsRef.current.filter((i) => i.value !== value)
-  }, [])
-
-  const setItemActive = useCallback((value: string, active: boolean) => {
-    const item = itemsRef.current.find((i) => i.value === value)
-    if (!item || item.active === active) return
-    item.active = active
-    setItemCount((c) => c + (active ? 1 : -1))
-    if (!active && highlightedRef.current === item.id) setHighlightedId(null)
+    if (highlightedRef.current === item.id) setHighlightedId(null)
+    itemsRef.current = itemsRef.current.filter((i) => i.id !== id)
+    setRegisteredCount((c) => c - 1)
   }, [])
 
   useLayoutEffect(() => {
@@ -72,7 +60,7 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
       setHighlightedId(null)
       return
     }
-    setHighlightedId(itemsRef.current.find((i) => i.active)?.id ?? null)
+    setHighlightedId(itemsRef.current.find((i) => matchesQuery(i.value, query))?.id ?? null)
   }, [query])
 
   useEffect(() => {
@@ -84,7 +72,8 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
         return
       }
       if (!open) return
-      const list = itemsRef.current.filter((i) => i.active)
+      const q = queryRef.current
+      const list = itemsRef.current.filter((i) => !q || matchesQuery(i.value, q))
       const current = highlightedRef.current
       const idx = list.findIndex((i) => i.id === (current ?? ""))
 
@@ -121,12 +110,12 @@ export function Command({ open: controlledOpen, onOpenChange, children }: Comman
       setHighlightedId,
       registerItem,
       unregisterItem,
-      setItemActive,
-      itemCount,
+      registeredCount,
+      items: itemsRef,
       inputRef,
       listId,
     }),
-    [open, setOpen, query, highlightedId, registerItem, unregisterItem, setItemActive, itemCount, listId],
+    [open, setOpen, query, highlightedId, registerItem, unregisterItem, registeredCount, listId],
   )
 
   return <CommandContext.Provider value={ctx}>{children}</CommandContext.Provider>

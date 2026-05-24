@@ -9,15 +9,19 @@ interface DialogProps extends HTMLAttributes<HTMLDivElement> {
   autoFocus?: boolean
 }
 
-export function Dialog({ children, shortcut: _shortcut, autoFocus = true, ...rest }: DialogProps) {
+export const Dialog = ({ children, shortcut: _shortcut, autoFocus = true, ...rest }: DialogProps) => {
   const { open, inputRef } = useCommand()
 
   useEffect(() => {
-    if (!open || !autoFocus) return
+    if (!open || !autoFocus) {
+      return
+    }
     inputRef.current?.focus()
   }, [open, autoFocus, inputRef])
 
-  if (!open) return null
+  if (!open) {
+    return null
+  }
 
   return createPortal(
     <div role="dialog" aria-modal="true" {...rest}>

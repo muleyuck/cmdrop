@@ -5,22 +5,26 @@ import { useCommand } from "./context"
 
 type OverlayProps = HTMLAttributes<HTMLDivElement>
 
-export function Overlay({ className, ...rest }: OverlayProps) {
+export const Overlay = ({ className, ...rest }: OverlayProps) => {
   const { open, setOpen } = useCommand()
   const overlayRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!open) return
-    function handlePointerDown(e: PointerEvent) {
+    if (!open) {
+      return
+    }
+    const handler = (e: PointerEvent) => {
       if (e.target === overlayRef.current) {
         setOpen(false)
       }
     }
-    document.addEventListener("pointerdown", handlePointerDown)
-    return () => document.removeEventListener("pointerdown", handlePointerDown)
+    document.addEventListener("pointerdown", handler)
+    return () => document.removeEventListener("pointerdown", handler)
   }, [open, setOpen])
 
-  if (!open) return null
+  if (!open) {
+    return null
+  }
 
   return createPortal(<div ref={overlayRef} role="presentation" className={className} {...rest} />, document.body)
 }

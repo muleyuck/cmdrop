@@ -1,6 +1,12 @@
 import type { RefObject } from "react"
 import { createContext, useContext } from "react"
 
+export interface RegisteredItem {
+  value: string
+  id: string
+  onSelect: () => void
+}
+
 export interface CommandContextValue {
   open: boolean
   setOpen: (open: boolean) => void
@@ -9,9 +15,9 @@ export interface CommandContextValue {
   highlightedId: string | null
   setHighlightedId: (value: string | null) => void
   registerItem: (value: string, id: string, onSelect: () => void) => void
-  unregisterItem: (value: string) => void
-  setItemActive: (value: string, active: boolean) => void
-  itemCount: number
+  unregisterItem: (id: string) => void
+  registeredCount: number
+  items: RefObject<RegisteredItem[]>
   inputRef: RefObject<HTMLInputElement | null>
   listId: string
 }

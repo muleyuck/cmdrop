@@ -3,7 +3,7 @@ import { useCommand } from "./context"
 
 type InputProps = InputHTMLAttributes<HTMLInputElement>
 
-export function Input({ onChange, ...props }: InputProps) {
+export const Input = ({ onChange, ...props }: InputProps) => {
   const { setQuery, inputRef, listId, highlightedId } = useCommand()
 
   return (
