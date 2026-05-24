@@ -7,11 +7,11 @@ export interface DemoVariant {
   code: string
 }
 
-function normalizeSource(source: string): string {
+const normalizeSource = (source: string): string => {
   return source.replace(/from "\.\.\.?\/\.\.\.?\/\.\.?\/src\/(.*?)"/g, 'from "@/components/ui/$1"')
 }
 
-export function DemoCard({
+export const DemoCard = ({
   label,
   description,
   variants,
@@ -19,7 +19,7 @@ export function DemoCard({
   label: string
   description: string
   variants: DemoVariant[]
-}) {
+}) => {
   const [tab, setTab] = useState<"preview" | "code">("preview")
   const [variantIndex, setVariantIndex] = useState(0)
 

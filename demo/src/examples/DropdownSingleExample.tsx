@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Content, Dropdown, Item, Trigger } from "../../../src/dropdown"
 
-export default function DropdownSingleExample() {
+const DropdownSingleExample = () => {
   const [value, setValue] = useState<string | undefined>(undefined)
   return (
     <Dropdown value={value} onValueChange={setValue}>
@@ -22,3 +22,5 @@ export default function DropdownSingleExample() {
     </Dropdown>
   )
 }
+
+export default DropdownSingleExample

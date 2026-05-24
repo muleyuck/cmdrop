@@ -3,7 +3,7 @@ import { Content, Dropdown, Empty, Input, Item, Trigger, useHighlight } from "..
 
 const FRAMEWORKS = ["React", "Vue", "Svelte", "SolidJS", "Angular", "Qwik"]
 
-function FilterableContent() {
+const FilterableContent = () => {
   const highlight = useHighlight({ className: "text-zinc-900 font-semibold dark:text-zinc-100" })
   return (
     <Content className="z-50 overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-2xl dark:border-zinc-700 dark:bg-zinc-900">
@@ -28,7 +28,7 @@ function FilterableContent() {
   )
 }
 
-export default function DropdownFilterableExample() {
+const DropdownFilterableExample = () => {
   const [value, setValue] = useState<string | undefined>(undefined)
   return (
     <Dropdown filterable value={value} onValueChange={setValue}>
@@ -39,3 +39,5 @@ export default function DropdownFilterableExample() {
     </Dropdown>
   )
 }
+
+export default DropdownFilterableExample

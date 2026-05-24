@@ -1,4 +1,4 @@
-export function CopyIcon() {
+export const CopyIcon = () => {
   return (
     <svg
       aria-hidden="true"
@@ -17,7 +17,7 @@ export function CopyIcon() {
   )
 }
 
-export function CheckIcon() {
+export const CheckIcon = () => {
   return (
     <svg
       aria-hidden="true"
@@ -35,7 +35,7 @@ export function CheckIcon() {
   )
 }
 
-export function SunIcon() {
+export const SunIcon = () => {
   return (
     <svg
       aria-hidden="true"
@@ -54,7 +54,7 @@ export function SunIcon() {
   )
 }
 
-export function MoonIcon() {
+export const MoonIcon = () => {
   return (
     <svg
       aria-hidden="true"
@@ -72,7 +72,7 @@ export function MoonIcon() {
   )
 }
 
-export function ChevronIcon({ className }: { className?: string }) {
+export const ChevronIcon = ({ className }: { className?: string }) => {
   return (
     <svg
       aria-hidden="true"

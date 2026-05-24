@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Content, Dropdown, Item, Trigger } from "../../../src/dropdown"
 
-export default function DropdownMultipleExample() {
+const DropdownMultipleExample = () => {
   const [tags, setTags] = useState<string[]>([])
   return (
     <Dropdown multiple value={tags} onValueChange={setTags}>
@@ -23,3 +23,5 @@ export default function DropdownMultipleExample() {
     </Dropdown>
   )
 }
+
+export default DropdownMultipleExample

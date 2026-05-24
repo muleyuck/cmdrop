@@ -12,7 +12,7 @@ import {
   useHighlight,
 } from "../../../src/command"
 
-function CommandContent({ onClose }: { onClose: () => void }) {
+const CommandContent = ({ onClose }: { onClose: () => void }) => {
   const highlight = useHighlight({ className: "text-zinc-900 font-semibold dark:text-zinc-100" })
 
   const scrollTo = (id: string) => {
@@ -104,7 +104,7 @@ function CommandContent({ onClose }: { onClose: () => void }) {
   )
 }
 
-export default function CommandDialogExample() {
+const CommandDialogExample = () => {
   const [open, setOpen] = useState(false)
   return (
     <div className="flex flex-col items-center gap-3 py-10">
@@ -126,10 +126,15 @@ export default function CommandDialogExample() {
       </button>
       <Command open={open} onOpenChange={setOpen}>
         <Overlay className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm dark:bg-black/60" />
-        <Dialog aria-label="Command palette" className="fixed left-1/2 top-[15vh] z-50 w-full max-w-lg -translate-x-1/2 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-2xl dark:border-zinc-700/60 dark:bg-zinc-900">
+        <Dialog
+          aria-label="Command palette"
+          className="fixed left-1/2 top-[15vh] z-50 w-full max-w-lg -translate-x-1/2 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-2xl dark:border-zinc-700/60 dark:bg-zinc-900"
+        >
           <CommandContent onClose={() => setOpen(false)} />
         </Dialog>
       </Command>
     </div>
   )
 }
+
+export default CommandDialogExample
