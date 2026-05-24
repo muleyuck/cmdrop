@@ -5,6 +5,7 @@ import { useCommand } from "./context"
 
 interface DialogProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode
+  /** Reserved for displaying a keyboard shortcut label in the dialog UI. Not yet rendered. */
   shortcut?: string
   autoFocus?: boolean
 }

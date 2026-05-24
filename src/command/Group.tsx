@@ -14,6 +14,7 @@ export const useGroupContext = (): GroupContextValue | null => {
 interface GroupProps extends HTMLAttributes<HTMLDivElement> {
   label?: string
   labelClassName?: string
+  /** When true, keeps the group visible even when all its child items are filtered out. */
   forceMount?: boolean
   children: ReactNode
 }

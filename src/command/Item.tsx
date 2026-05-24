@@ -6,6 +6,7 @@ import { matchesQuery } from "./utils"
 
 interface ItemProps extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
   onSelect: () => void
+  /** Used for filtering and keyboard navigation. Defaults to the text content of `children` when omitted. */
   value?: string
   disabled?: boolean
   children: ReactNode
