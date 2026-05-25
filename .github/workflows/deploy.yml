@@ -1,0 +1,52 @@
+name: Deploy demo to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions: {}
+defaults:
+  run:
+    shell: bash
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    strategy:
+      matrix:
+        node-version:
+          - 25
+        pnpm-version:
+          - 10.33.0
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup pnpm ${{ matrix.pnpm-version }}
+        uses: pnpm/action-setup@v6
+        with:
+          version: ${{ matrix.pnpm-version }}
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm demo:build
+      - run: cp registry.json demo/dist/registry.json
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: demo/dist
+      - id: deployment
+        uses: actions/deploy-pages@v5
