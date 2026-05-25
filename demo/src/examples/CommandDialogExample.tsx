@@ -32,7 +32,7 @@ const CommandContent = ({ onClose }: { onClose: () => void }) => {
         >
           <Item
             value="Home"
-            className="flex cursor-pointer select-none items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none text-zinc-700 dark:text-zinc-300 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-900 dark:data-[highlighted]:bg-zinc-700/60 dark:data-[highlighted]:text-zinc-100 aria-disabled:opacity-40 aria-disabled:pointer-events-none"
+            className="flex cursor-pointer select-none items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none text-zinc-700 dark:text-zinc-300 data-highlighted:bg-zinc-100 data-highlighted:text-zinc-900 dark:data-highlighted:bg-zinc-700/60 dark:data-highlighted:text-zinc-100 aria-disabled:opacity-40 aria-disabled:pointer-events-none"
             onSelect={() => {
               window.scrollTo({ top: 0, behavior: "smooth" })
               onClose()
@@ -42,7 +42,7 @@ const CommandContent = ({ onClose }: { onClose: () => void }) => {
           </Item>
           <Item
             value="Dropdown"
-            className="flex cursor-pointer select-none items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none text-zinc-700 dark:text-zinc-300 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-900 dark:data-[highlighted]:bg-zinc-700/60 dark:data-[highlighted]:text-zinc-100 aria-disabled:opacity-40 aria-disabled:pointer-events-none"
+            className="flex cursor-pointer select-none items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none text-zinc-700 dark:text-zinc-300 data-highlighted:bg-zinc-100 data-highlighted:text-zinc-900 dark:data-highlighted:bg-zinc-700/60 dark:data-highlighted:text-zinc-100 aria-disabled:opacity-40 aria-disabled:pointer-events-none"
             onSelect={() => {
               scrollTo("dropdown")
               onClose()
@@ -52,7 +52,7 @@ const CommandContent = ({ onClose }: { onClose: () => void }) => {
           </Item>
           <Item
             value="Command Palette"
-            className="flex cursor-pointer select-none items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none text-zinc-700 dark:text-zinc-300 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-900 dark:data-[highlighted]:bg-zinc-700/60 dark:data-[highlighted]:text-zinc-100 aria-disabled:opacity-40 aria-disabled:pointer-events-none"
+            className="flex cursor-pointer select-none items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none text-zinc-700 dark:text-zinc-300 data-highlighted:bg-zinc-100 data-highlighted:text-zinc-900 dark:data-highlighted:bg-zinc-700/60 dark:data-highlighted:text-zinc-100 aria-disabled:opacity-40 aria-disabled:pointer-events-none"
             onSelect={() => {
               scrollTo("command")
               onClose()
@@ -62,7 +62,7 @@ const CommandContent = ({ onClose }: { onClose: () => void }) => {
           </Item>
           <Item
             value="Open GitHub"
-            className="flex cursor-pointer select-none items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none text-zinc-700 dark:text-zinc-300 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-900 dark:data-[highlighted]:bg-zinc-700/60 dark:data-[highlighted]:text-zinc-100 aria-disabled:opacity-40 aria-disabled:pointer-events-none"
+            className="flex cursor-pointer select-none items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none text-zinc-700 dark:text-zinc-300 data-highlighted:bg-zinc-100 data-highlighted:text-zinc-900 dark:data-highlighted:bg-zinc-700/60 dark:data-highlighted:text-zinc-100 aria-disabled:opacity-40 aria-disabled:pointer-events-none"
             onSelect={() => {
               onClose()
               window.open("https://github.com/muleyuck/cmdrop", "_blank")
@@ -78,7 +78,7 @@ const CommandContent = ({ onClose }: { onClose: () => void }) => {
         >
           <Item
             value="Copy install command"
-            className="flex cursor-pointer select-none items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none text-zinc-700 dark:text-zinc-300 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-900 dark:data-[highlighted]:bg-zinc-700/60 dark:data-[highlighted]:text-zinc-100 aria-disabled:opacity-40 aria-disabled:pointer-events-none"
+            className="flex cursor-pointer select-none items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none text-zinc-700 dark:text-zinc-300 data-highlighted:bg-zinc-100 data-highlighted:text-zinc-900 dark:data-highlighted:bg-zinc-700/60 dark:data-highlighted:text-zinc-100 aria-disabled:opacity-40 aria-disabled:pointer-events-none"
             onSelect={async () => {
               await navigator.clipboard.writeText("npx shadcn add https://muleyuck.github.io/cmdrop/registry.json")
               onClose()

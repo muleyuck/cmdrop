@@ -13,7 +13,7 @@ const DropdownSingleExample = () => {
           <Item
             key={fw}
             value={fw}
-            className="flex cursor-pointer select-none items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none text-zinc-700 dark:text-zinc-300 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-900 dark:data-[highlighted]:bg-zinc-700/60 dark:data-[highlighted]:text-zinc-100"
+            className="flex cursor-pointer select-none items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none text-zinc-700 dark:text-zinc-300 data-highlighted:bg-zinc-100 data-highlighted:text-zinc-900 dark:data-highlighted:bg-zinc-700/60 dark:data-highlighted:text-zinc-100"
           >
             {fw}
           </Item>
