@@ -5,6 +5,7 @@ import { Content } from "../../src/dropdown/Content"
 import { Dropdown } from "../../src/dropdown/Dropdown"
 import { Empty } from "../../src/dropdown/Empty"
 import { Group } from "../../src/dropdown/Group"
+import { Input } from "../../src/dropdown/Input"
 import { Item } from "../../src/dropdown/Item"
 import { Trigger } from "../../src/dropdown/Trigger"
 import { Separator } from "../../src/shared/Separator"
@@ -99,14 +100,17 @@ describe("Dropdown.Empty", () => {
   it("aria-live=polite を持つ", async () => {
     const user = userEvent.setup()
     render(
-      <Dropdown>
+      <Dropdown filterable>
         <Trigger>Open</Trigger>
         <Content>
+          <Input placeholder="Search..." />
+          <Item value="apple">Apple</Item>
           <Empty>No results</Empty>
         </Content>
       </Dropdown>,
     )
     await user.click(screen.getByRole("button"))
+    await user.type(screen.getByPlaceholderText("Search..."), "zzz")
     const empty = screen.getByText("No results")
     expect(empty).toHaveAttribute("aria-live", "polite")
   })
