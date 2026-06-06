@@ -61,7 +61,7 @@ describe("useHighlight", () => {
     render(
       <Command open>
         <Input />
-        <HighlightTest text="Calendar" className="text-indigo-400 font-bold" />
+        <HighlightTest text="Calendar" className="font-bold text-indigo-400" />
       </Command>,
     )
     await userEvent.type(screen.getByRole("textbox"), "cal")

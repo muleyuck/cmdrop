@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "biome check ./src ./tests",
     "format": "biome format --write ./src ./tests",
+    "demo:dev": "pnpm --filter cmdrop-demo dev",
     "demo:build": "pnpm --filter cmdrop-demo build"
   },
   "peerDependencies": {
