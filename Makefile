@@ -2,4 +2,4 @@
 test:
 	pnpm run lint
 	pnpm run test
-	pnpm run build
+	pnpm run demo:build
