@@ -1,6 +1,6 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="/public/demo/logo-dark.svg">
-  <img width="512" src="/public/demo/logo-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="/demo/public/logo-dark.svg">
+  <img width="512" src="/demo/public/logo-light.svg">
 </picture>
 
 [![unit-test](https://github.com/muleyuck/cmdrop/actions/workflows/unit-test.yml/badge.svg)](https://github.com/muleyuck/cmdrop/actions/workflows/unit-test.yml)
@@ -101,3 +101,9 @@ const [open, setOpen] = useState(false)
 `Item.value` defaults to the text content of `children` when omitted.
 
 **Keyboard:** `↑`/`↓` to navigate, `Enter` to select, `Escape` to close, `⌘K`/`Ctrl+K` to toggle.
+
+
+## License
+
+[The MIT Licence](https://github.com/muleyuck/cmdrop/blob/main/LICENSE)
+
